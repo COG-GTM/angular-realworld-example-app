@@ -152,5 +152,129 @@ export const HomeComponent: React.FC<HomeComponentProps> = ({
     [feed, onPageChange],
   );
 
-  return null;
+  return (
+    <div className="home-page">
+      {/* Banner: shown only when NOT authenticated (mirrors *ifAuthenticated="false") */}
+      {!isAuthenticated && (
+        <div className="banner">
+          <div className="container">
+            <h1 className="logo-font">
+              <img
+                src="assets/conduit-logo.svg"
+                alt="Conduit"
+                className="banner-logo"
+              />
+            </h1>
+            <p>
+              This is the{" "}
+              <a href="https://github.com/realworld-apps/angular-realworld-example-app">
+                Angular frontend
+              </a>{" "}
+              demo from the{" "}
+              <a href="https://github.com/realworld-apps/realworld">
+                Realworld
+              </a>{" "}
+              project.
+              <br />
+              This demo is connected to a demo backend that enforces session
+              isolation.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="container page">
+        <div className="row">
+          <div className="col-md-9">
+            <div className="feed-toggle">
+              <ul className="nav nav-pills outline-active">
+                {/* Your Feed tab: shown only when authenticated (mirrors *ifAuthenticated="true") */}
+                {isAuthenticated && (
+                  <li className="nav-item">
+                    <a
+                      className={`nav-link${listConfig.type === "feed" ? " active" : ""}`}
+                      style={{ cursor: "pointer" }}
+                      onClick={onNavigateToFollowingFeed}
+                    >
+                      Your Feed
+                    </a>
+                  </li>
+                )}
+
+                {/* Global Feed tab */}
+                <li className="nav-item">
+                  <a
+                    className={`nav-link${listConfig.type === "all" && !listConfig.filters.tag ? " active" : ""}`}
+                    style={{ cursor: "pointer" }}
+                    onClick={onNavigateToGlobalFeed}
+                  >
+                    Global Feed
+                  </a>
+                </li>
+
+                {/* Tag Feed tab: shown only when a tag filter is active (mirrors [hidden]) */}
+                {listConfig.filters.tag && (
+                  <li className="nav-item">
+                    <a className="nav-link active">
+                      <i className="ion-pound"></i> {listConfig.filters.tag}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/*
+             * TODO: Replace with React version of ArticleListComponent.
+             * The Angular version receives these inputs/outputs:
+             *   [limit]="10"
+             *   [config]="listConfig()"
+             *   [currentPage]="currentPage()"
+             *   [isFollowingFeed]="isFollowingFeed()"
+             *   (pageChange)="onPageChange($event)"
+             *
+             * For now, render a placeholder div that documents the expected props.
+             */}
+            <div
+              data-component="ArticleList"
+              data-limit={10}
+              data-config={JSON.stringify(listConfig)}
+              data-current-page={currentPage}
+              data-is-following-feed={isFollowingFeed}
+            >
+              {/* TODO: Wire up ArticleListComponent once it is migrated to React */}
+            </div>
+          </div>
+
+          {/* Sidebar: Popular Tags (mirrors *rxLet="tags$; let tags") */}
+          <div className="col-md-3">
+            <div className="sidebar">
+              <p>Popular Tags</p>
+
+              <div className="tag-list">
+                {/* Mirrors @for (tag of tags; track tag) */}
+                {tags.map((tagItem) => (
+                  <a
+                    key={tagItem}
+                    className="tag-default tag-pill"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onNavigateToTag(tagItem)}
+                  >
+                    {tagItem}
+                  </a>
+                ))}
+              </div>
+
+              {/* Loading state (mirrors [hidden]="tagsLoaded()") */}
+              {!tagsLoaded && <div>Loading tags...</div>}
+
+              {/* Empty state (mirrors [hidden]="!tagsLoaded() || tags.length > 0") */}
+              {tagsLoaded && tags.length === 0 && (
+                <div>No tags are here... yet.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };

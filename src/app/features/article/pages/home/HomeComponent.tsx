@@ -234,15 +234,31 @@ export const HomeComponent: React.FC<HomeComponentProps> = ({
              *
              * For now, render a placeholder div that documents the expected props.
              */}
+            {/*
+             * TODO: Replace this placeholder with a React ArticleListComponent.
+             * Expected props for the React ArticleListComponent:
+             *   limit={10}
+             *   config={listConfig}
+             *   currentPage={currentPage}
+             *   isFollowingFeed={isFollowingFeed}
+             *   onPageChange={handlePageChange}
+             *
+             * The Angular ArticleListComponent (article-list.component.ts) handles:
+             *   - Fetching articles via ArticlesService.query()
+             *   - Pagination rendering and page change events
+             *   - Loading states and empty feed messages
+             *
+             * TODO: Migrate ArticlesService to a React hook (useArticles)
+             * TODO: Migrate ArticlePreviewComponent to React
+             */}
             <div
               data-component="ArticleList"
               data-limit={10}
               data-config={JSON.stringify(listConfig)}
               data-current-page={currentPage}
               data-is-following-feed={isFollowingFeed}
-            >
-              {/* TODO: Wire up ArticleListComponent once it is migrated to React */}
-            </div>
+              data-on-page-change="handlePageChange"
+            />
           </div>
 
           {/* Sidebar: Popular Tags (mirrors *rxLet="tags$; let tags") */}

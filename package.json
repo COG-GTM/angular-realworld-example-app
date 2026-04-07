@@ -58,5 +58,8 @@
   },
   "lint-staged": {
     "*.{ts,html,css,json,md}": "prettier --write"
+  },
+  "overrides": {
+    "brace-expansion@2": "2.0.3"
   }
 }

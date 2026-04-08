@@ -68,9 +68,17 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 
     try {
       if (!article.favorited) {
-        await onFavorite?.(article.slug);
+        if (onFavorite) {
+          await onFavorite(article.slug);
+        } else {
+          return;
+        }
       } else {
-        await onUnfavorite?.(article.slug);
+        if (onUnfavorite) {
+          await onUnfavorite(article.slug);
+        } else {
+          return;
+        }
       }
       onToggle?.(!article.favorited);
     } catch {

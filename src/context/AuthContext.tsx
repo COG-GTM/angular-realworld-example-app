@@ -60,17 +60,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>("loading");
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const cancelRetry = useCallback(() => {
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+  }, []);
+
   const setAuth = useCallback((user: User) => {
+    cancelRetry();
     setCurrentUser(user);
     saveToken(user.token);
     setAuthState("authenticated");
-  }, []);
+  }, [cancelRetry]);
 
   const purgeAuth = useCallback(() => {
+    cancelRetry();
     setCurrentUser(null);
     destroyToken();
     setAuthState("unauthenticated");
-  }, []);
+  }, [cancelRetry]);
 
   const fetchCurrentUser = useCallback(
     async (retryCount = 0) => {
@@ -85,9 +94,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Server error — set unavailable and retry with exponential backoff
           setAuthState("unavailable");
           const delay = Math.min(2000 * Math.pow(2, retryCount), 16000);
-          retryTimeoutRef.current = setTimeout(() => {
-            fetchCurrentUser(retryCount + 1);
-          }, delay);
+          if (getToken()) {
+            retryTimeoutRef.current = setTimeout(() => {
+              if (getToken()) {
+                fetchCurrentUser(retryCount + 1);
+              }
+            }, delay);
+          }
         }
       }
     },
@@ -112,6 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Listen for 401 auth purge events from API interceptor
   useEffect(() => {
     const handleAuthPurge = () => {
+      cancelRetry();
       setCurrentUser(null);
       setAuthState("unauthenticated");
     };

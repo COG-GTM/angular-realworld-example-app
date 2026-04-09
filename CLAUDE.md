@@ -1,19 +1,20 @@
-# Angular RealWorld Example App
+# React RealWorld Example App
 
 ## Commands
 
 ```bash
-bun run setup         # Init submodules + install deps (run after clone or after realworld submodule update)
-bun run start         # Dev server at localhost:4200
-bun run test          # Unit tests (Vitest)
-bun run test:e2e      # E2E tests (Playwright)
-bun run format        # Format code with Prettier
-bun run format:check  # Check formatting without writing
+npm run setup         # Init submodules + install deps (run after clone or after realworld submodule update)
+npm run start         # Dev server at localhost:4200
+npm run build         # TypeScript check + Vite production build
+npm run lint          # TypeScript type checking (tsc --noEmit)
+npm run test:e2e      # E2E tests (Playwright)
+npm run format        # Format code with Prettier
+npm run format:check  # Check formatting without writing
 ```
 
 ## Code Style
 
-- Run `bun run format` before presenting code to the user.
+- Run `npm run format` before presenting code to the user.
 
 ## Debug Interface
 

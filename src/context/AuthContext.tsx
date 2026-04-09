@@ -18,7 +18,7 @@ export type AuthState =
   | "unavailable";
 
 interface ConduitDebug {
-  getToken: () => string;
+  getToken: () => string | null;
   getAuthState: () => AuthState;
   getCurrentUser: () => User | null;
 }
@@ -157,9 +157,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateUser = useCallback(
     async (user: Partial<User>) => {
       const response = await api.put("/user", { user });
-      setCurrentUser(response.data.user);
+      setAuth(response.data.user);
     },
-    [],
+    [setAuth],
   );
 
   const value: AuthContextType = {

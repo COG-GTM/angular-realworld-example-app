@@ -60,7 +60,7 @@ function ArticleMeta({
           </button>
         </>
       ) : (
-        authState === "authenticated" && (
+        authState !== "loading" && (
           <>
             <FollowButton
               profile={article.author}

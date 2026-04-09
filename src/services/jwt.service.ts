@@ -1,7 +1,7 @@
 const TOKEN_KEY = "jwtToken";
 
-export function getToken(): string {
-  return window.localStorage[TOKEN_KEY] || "";
+export function getToken(): string | null {
+  return window.localStorage[TOKEN_KEY] || null;
 }
 
 export function saveToken(token: string): void {

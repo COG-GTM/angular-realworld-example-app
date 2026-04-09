@@ -24,6 +24,8 @@ export function Profile() {
 
   useEffect(() => {
     if (!username) return;
+    setLoadError(false);
+    setProfile(null);
     ProfileService.get(username)
       .then(setProfile)
       .catch(() => setLoadError(true));

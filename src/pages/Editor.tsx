@@ -3,10 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArticlesService } from "../services/articles.service";
 import { ListErrors } from "../components/shared/ListErrors";
 import { Errors } from "../models/errors.model";
+import { useAuth } from "../context/AuthContext";
 
 export function Editor() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -19,13 +21,17 @@ export function Editor() {
   useEffect(() => {
     if (slug) {
       ArticlesService.get(slug).then((article) => {
+        if (currentUser && article.author.username !== currentUser.username) {
+          navigate("/");
+          return;
+        }
         setTitle(article.title);
         setDescription(article.description);
         setBody(article.body);
         setTagList(article.tagList);
       });
     }
-  }, [slug]);
+  }, [slug, currentUser, navigate]);
 
   const handleAddTag = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {

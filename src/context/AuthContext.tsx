@@ -42,7 +42,7 @@ interface AuthContextType {
     password: string;
   }) => Promise<void>;
   logout: () => void;
-  updateUser: (user: Partial<User>) => Promise<void>;
+  updateUser: (user: Partial<User>) => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -169,9 +169,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [purgeAuth]);
 
   const updateUser = useCallback(
-    async (user: Partial<User>) => {
+    async (user: Partial<User>): Promise<User> => {
       const response = await api.put("/user", { user });
-      setAuth(response.data.user);
+      const updatedUser: User = response.data.user;
+      setAuth(updatedUser);
+      return updatedUser;
     },
     [setAuth],
   );

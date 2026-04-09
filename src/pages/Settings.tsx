@@ -30,8 +30,8 @@ export function Settings() {
       if (password) {
         userData.password = password;
       }
-      await updateUser(userData);
-      navigate(`/profile/${username}`);
+      const updatedUser = await updateUser(userData);
+      navigate(`/profile/${updatedUser.username}`);
     } catch (err: unknown) {
       setErrors(err as Errors);
     } finally {

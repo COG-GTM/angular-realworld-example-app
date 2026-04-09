@@ -43,8 +43,8 @@ export function ArticleList({
           offset: (page - 1) * ARTICLES_PER_PAGE,
         },
       });
-      setArticles(result.articles);
-      setArticlesCount(result.articlesCount);
+      setArticles(Array.isArray(result.articles) ? result.articles : []);
+      setArticlesCount(typeof result.articlesCount === 'number' ? result.articlesCount : 0);
     } catch {
       setArticles([]);
       setArticlesCount(0);

@@ -32,12 +32,10 @@ export function Profile() {
   if (loadError || !username) {
     return (
       <div className="profile-page">
-        <div className="user-info">
-          <div className="container">
-            <div className="row">
-              <div className="col-xs-12 col-md-10 offset-md-1">
-                <p>{loadError ? "Could not load profile." : "Loading..."}</p>
-              </div>
+        <div className="container">
+          <div className="row">
+            <div className="col-xs-12 col-md-10 offset-md-1">
+              <p>{loadError ? "Could not load profile." : "Loading..."}</p>
             </div>
           </div>
         </div>
@@ -48,12 +46,10 @@ export function Profile() {
   if (!profile) {
     return (
       <div className="profile-page">
-        <div className="user-info">
-          <div className="container">
-            <div className="row">
-              <div className="col-xs-12 col-md-10 offset-md-1">
-                <p>Loading profile...</p>
-              </div>
+        <div className="container">
+          <div className="row">
+            <div className="col-xs-12 col-md-10 offset-md-1">
+              <p>Loading profile...</p>
             </div>
           </div>
         </div>

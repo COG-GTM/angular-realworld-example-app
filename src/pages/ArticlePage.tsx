@@ -1,6 +1,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { marked } from "marked";
+import DOMPurify from "dompurify";
 import { Article } from "../models/article.model";
 import { Comment } from "../models/comment.model";
 import { useAuth } from "../context/AuthContext";
@@ -140,12 +141,16 @@ export function ArticlePage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentBody, setCommentBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [commentErrors, setCommentErrors] = useState<Record<string, string[]> | null>(null);
 
   useEffect(() => {
     if (!slug) return;
-    ArticlesService.get(slug).then(setArticle).catch(() => navigate("/"));
+    ArticlesService.get(slug)
+      .then(setArticle)
+      .catch(() => setLoadError(true));
     CommentsService.getAll(slug).then(setComments).catch(() => {});
-  }, [slug, navigate]);
+  }, [slug]);
 
   const handleDelete = async () => {
     if (!slug) return;
@@ -157,10 +162,14 @@ export function ArticlePage() {
     e.preventDefault();
     if (!slug || !commentBody.trim()) return;
     setSubmitting(true);
+    setCommentErrors(null);
     try {
       const comment = await CommentsService.add(slug, commentBody);
       setComments((prev) => [comment, ...prev]);
       setCommentBody("");
+    } catch (err: unknown) {
+      const error = err as { errors?: Record<string, string[]> };
+      setCommentErrors(error.errors || { comment: ["Failed to post comment"] });
     } finally {
       setSubmitting(false);
     }
@@ -168,15 +177,35 @@ export function ArticlePage() {
 
   const handleDeleteComment = async (commentId: string) => {
     if (!slug) return;
-    await CommentsService.delete(commentId, slug);
-    setComments((prev) => prev.filter((c) => c.id !== commentId));
+    try {
+      await CommentsService.delete(commentId, slug);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setCommentErrors(null);
+    } catch (err: unknown) {
+      const error = err as { errors?: Record<string, string[]> };
+      setCommentErrors(error.errors || { comment: ["Failed to delete comment"] });
+    }
   };
+
+  if (loadError) {
+    return (
+      <div className="article-page">
+        <div className="container page">
+          <div className="row article-content">
+            <div className="col-md-12">
+              <p>Could not load article.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!article) {
     return <div className="article-page">Loading...</div>;
   }
 
-  const markup = { __html: marked.parse(article.body) as string };
+  const markup = { __html: DOMPurify.sanitize(marked.parse(article.body) as string) };
 
   return (
     <div className="article-page">
@@ -252,6 +281,14 @@ export function ArticlePage() {
                 <Link to="/register">sign up</Link> to add comments on this
                 article.
               </p>
+            )}
+
+            {commentErrors && (
+              <ul className="error-messages">
+                {Object.keys(commentErrors).map((key) => (
+                  <li key={key}>{key} {commentErrors[key].join(", ")}</li>
+                ))}
+              </ul>
             )}
 
             {comments.map((comment) => (

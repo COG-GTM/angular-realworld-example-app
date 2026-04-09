@@ -59,6 +59,7 @@ export function Settings() {
                   <input
                     className="form-control"
                     type="text"
+                    name="image"
                     placeholder="URL of profile picture"
                     value={image}
                     onChange={(e) => setImage(e.target.value)}
@@ -68,6 +69,7 @@ export function Settings() {
                   <input
                     className="form-control form-control-lg"
                     type="text"
+                    name="username"
                     placeholder="Your Name"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -76,6 +78,7 @@ export function Settings() {
                 <fieldset className="form-group">
                   <textarea
                     className="form-control form-control-lg"
+                    name="bio"
                     rows={8}
                     placeholder="Short bio about you"
                     value={bio}
@@ -86,6 +89,7 @@ export function Settings() {
                   <input
                     className="form-control form-control-lg"
                     type="text"
+                    name="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -95,6 +99,7 @@ export function Settings() {
                   <input
                     className="form-control form-control-lg"
                     type="password"
+                    name="password"
                     placeholder="New Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -116,7 +121,7 @@ export function Settings() {
               className="btn btn-outline-danger"
               onClick={handleLogout}
             >
-              Or click here to logout.
+              Or click here to logout
             </button>
           </div>
         </div>

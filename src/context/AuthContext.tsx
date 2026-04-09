@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { User } from "../models/user.model";
 import api from "../services/api";
+import { AUTH_PURGE_EVENT } from "../services/api";
 import { getToken, saveToken, destroyToken } from "../services/jwt.service";
 
 export type AuthState =
@@ -107,6 +108,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
   }, [fetchCurrentUser]);
+
+  // Listen for 401 auth purge events from API interceptor
+  useEffect(() => {
+    const handleAuthPurge = () => {
+      setCurrentUser(null);
+      setAuthState("unauthenticated");
+    };
+    window.addEventListener(AUTH_PURGE_EVENT, handleAuthPurge);
+    return () => window.removeEventListener(AUTH_PURGE_EVENT, handleAuthPurge);
+  }, []);
 
   // Debug interface for E2E tests
   useEffect(() => {

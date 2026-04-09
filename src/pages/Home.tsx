@@ -1,5 +1,10 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import {
+  useParams,
+  useSearchParams,
+  useNavigate,
+  Link,
+} from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ArticleList } from "../components/shared/ArticleList";
 import { ArticleListConfig } from "../models/article.model";
@@ -9,14 +14,22 @@ type FeedType = "global" | "feed" | "tag";
 
 export function Home() {
   const { tag: routeTag } = useParams<{ tag: string }>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { authState } = useAuth();
   const [tags, setTags] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<FeedType>(
-    authState === "authenticated" ? "feed" : "global",
-  );
-  const [selectedTag, setSelectedTag] = useState<string | undefined>(
-    routeTag,
-  );
+
+  const feedParam = searchParams.get("feed");
+  const pageParam = searchParams.get("page");
+  const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+  const activeTab: FeedType = (() => {
+    if (routeTag) return "tag";
+    if (feedParam === "following") return "feed";
+    return "global";
+  })();
+
+  const selectedTag = routeTag;
 
   useEffect(() => {
     TagsService.getAll()
@@ -25,40 +38,39 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    if (routeTag) {
-      setActiveTab("tag");
-      setSelectedTag(routeTag);
+    if (feedParam === "following" && authState === "unauthenticated") {
+      navigate("/login", { replace: true });
     }
-  }, [routeTag]);
+  }, [feedParam, authState, navigate]);
 
-  useEffect(() => {
-    if (authState === "authenticated" && !routeTag) {
-      setActiveTab("feed");
-    } else if (authState === "unauthenticated" && activeTab === "feed") {
-      setActiveTab("global");
-    }
-  }, [authState, routeTag, activeTab]);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams();
+      if (feedParam) params.set("feed", feedParam);
+      if (page > 1) params.set("page", String(page));
+      const search = params.toString();
 
-  const handleTabClick = (tab: FeedType) => {
-    setActiveTab(tab);
-    if (tab !== "tag") {
-      setSelectedTag(undefined);
-    }
-  };
+      if (routeTag) {
+        navigate(`/tag/${routeTag}${search ? `?${search}` : ""}`);
+      } else {
+        navigate(`/${search ? `?${search}` : ""}`);
+      }
+    },
+    [feedParam, routeTag, navigate],
+  );
 
   const handleTagClick = (tag: string) => {
-    setActiveTab("tag");
-    setSelectedTag(tag);
+    navigate(`/tag/${tag}`);
   };
 
   const config: ArticleListConfig = (() => {
     switch (activeTab) {
       case "feed":
-        return { type: "feed", filters: {} };
+        return { type: "feed" as const, filters: {} };
       case "tag":
-        return { type: "all", filters: { tag: selectedTag } };
+        return { type: "all" as const, filters: { tag: selectedTag } };
       default:
-        return { type: "all", filters: {} };
+        return { type: "all" as const, filters: {} };
     }
   })();
 
@@ -80,50 +92,41 @@ export function Home() {
               <ul className="nav nav-pills outline-active">
                 {authState === "authenticated" && (
                   <li className="nav-item">
-                    <button
+                    <Link
                       className={`nav-link ${activeTab === "feed" ? "active" : ""}`}
-                      onClick={() => handleTabClick("feed")}
-                      style={{
-                        cursor: "pointer",
-                        border: "none",
-                        background: "none",
-                      }}
+                      to="/?feed=following"
                     >
                       Your Feed
-                    </button>
+                    </Link>
                   </li>
                 )}
                 <li className="nav-item">
-                  <button
+                  <Link
                     className={`nav-link ${activeTab === "global" ? "active" : ""}`}
-                    onClick={() => handleTabClick("global")}
-                    style={{
-                      cursor: "pointer",
-                      border: "none",
-                      background: "none",
-                    }}
+                    to="/"
                   >
                     Global Feed
-                  </button>
+                  </Link>
                 </li>
                 {activeTab === "tag" && selectedTag && (
                   <li className="nav-item">
-                    <button
+                    <Link
                       className="nav-link active"
-                      style={{
-                        cursor: "pointer",
-                        border: "none",
-                        background: "none",
-                      }}
+                      to={`/tag/${selectedTag}`}
                     >
                       <i className="ion-pound"></i> {selectedTag}
-                    </button>
+                    </Link>
                   </li>
                 )}
               </ul>
             </div>
 
-            <ArticleList config={config} />
+            <ArticleList
+              config={config}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+              emptyMessage={activeTab === "feed" ? "feed" : undefined}
+            />
           </div>
 
           <div className="col-md-3">

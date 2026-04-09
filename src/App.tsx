@@ -12,7 +12,7 @@ import { Profile } from "./pages/Profile";
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { authState } = useAuth();
 
-  if (authState === "loading") {
+  if (authState === "loading" || authState === "unavailable") {
     return null;
   }
 

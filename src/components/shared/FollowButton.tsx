@@ -26,6 +26,8 @@ export function FollowButton({ profile, onToggle }: FollowButtonProps) {
         ? await ProfileService.unfollow(profile.username)
         : await ProfileService.follow(profile.username);
       onToggle?.(updated);
+    } catch {
+      // Silently handle errors - button stays in current state
     } finally {
       setSubmitting(false);
     }

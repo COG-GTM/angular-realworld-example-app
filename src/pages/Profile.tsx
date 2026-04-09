@@ -20,13 +20,45 @@ export function Profile() {
   const isFavorites = location.pathname.endsWith("/favorites");
   const isOwnProfile = currentUser?.username === username;
 
+  const [loadError, setLoadError] = useState(false);
+
   useEffect(() => {
     if (!username) return;
-    ProfileService.get(username).then(setProfile).catch(() => {});
+    ProfileService.get(username)
+      .then(setProfile)
+      .catch(() => setLoadError(true));
   }, [username]);
 
-  if (!profile || !username) {
-    return <div>Loading profile...</div>;
+  if (loadError || !username) {
+    return (
+      <div className="profile-page">
+        <div className="user-info">
+          <div className="container">
+            <div className="row">
+              <div className="col-xs-12 col-md-10 offset-md-1">
+                <p>{loadError ? "Could not load profile." : "Loading..."}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="profile-page">
+        <div className="user-info">
+          <div className="container">
+            <div className="row">
+              <div className="col-xs-12 col-md-10 offset-md-1">
+                <p>Loading profile...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const config: ArticleListConfig = isFavorites
@@ -45,7 +77,7 @@ export function Profile() {
                 alt={profile.username}
               />
               <h4>{profile.username}</h4>
-              <p>{profile.bio}</p>
+              <p>{profile.bio || ""}</p>
 
               {isOwnProfile ? (
                 <Link

@@ -74,6 +74,7 @@ export function Editor() {
                 <fieldset className="form-group">
                   <input
                     type="text"
+                    name="title"
                     className="form-control form-control-lg"
                     placeholder="Article Title"
                     value={title}
@@ -83,6 +84,7 @@ export function Editor() {
                 <fieldset className="form-group">
                   <input
                     type="text"
+                    name="description"
                     className="form-control"
                     placeholder="What's this article about?"
                     value={description}
@@ -91,6 +93,7 @@ export function Editor() {
                 </fieldset>
                 <fieldset className="form-group">
                   <textarea
+                    name="body"
                     className="form-control"
                     rows={8}
                     placeholder="Write your article (in markdown)"

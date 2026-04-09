@@ -1,6 +1,12 @@
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
+const DEFAULT_AVATAR = "/realworld/assets/media/default-avatar.svg";
+
+function userImage(image: string | null | undefined): string {
+  return image || DEFAULT_AVATAR;
+}
+
 export function Header() {
   const { currentUser, authState } = useAuth();
 
@@ -34,17 +40,21 @@ export function Header() {
                   className="nav-link"
                   to={`/profile/${currentUser.username}`}
                 >
-                  {currentUser.image && (
-                    <img
-                      src={currentUser.image}
-                      className="user-pic"
-                      alt={currentUser.username}
-                    />
-                  )}
+                  <img
+                    src={userImage(currentUser.image)}
+                    className="user-pic"
+                    alt={currentUser.username}
+                  />
                   {currentUser.username}
                 </NavLink>
               </li>
             </>
+          )}
+
+          {authState === "unavailable" && (
+            <li className="nav-item">
+              <span className="nav-link">Connecting...</span>
+            </li>
           )}
 
           {authState === "unauthenticated" && (

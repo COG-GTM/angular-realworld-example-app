@@ -33,6 +33,8 @@ export function FavoriteButton({
         ? await ArticlesService.unfavorite(article.slug)
         : await ArticlesService.favorite(article.slug);
       onToggle?.(updated);
+    } catch {
+      // Silently handle errors - button stays in current state
     } finally {
       setSubmitting(false);
     }

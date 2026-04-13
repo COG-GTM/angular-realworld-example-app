@@ -44,7 +44,7 @@ const ListErrors: React.FC<{ errors: Errors | null }> = ({ errors }) => {
           <li key={`${field}-${i}`}>
             {field} {msg}
           </li>
-        ))
+        )),
       )}
     </ul>
   );
@@ -68,7 +68,9 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
 
   // Track mount state for async cleanup (replaces takeUntilDestroyed)
   useEffect(() => {
-    return () => { mountedRef.current = false; };
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
   // Replaces ngOnInit — patch form with current user data (runs once on mount)
@@ -119,7 +121,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
                     placeholder="URL of profile picture"
                     name="image"
                     value={image}
-                    onChange={(e) => setImage(e.target.value)}
+                    onChange={e => setImage(e.target.value)}
                   />
                 </fieldset>
 
@@ -130,7 +132,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
                     placeholder="Username"
                     name="username"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={e => setUsername(e.target.value)}
                   />
                 </fieldset>
 
@@ -141,7 +143,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
                     placeholder="Short bio about you"
                     name="bio"
                     value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    onChange={e => setBio(e.target.value)}
                   />
                 </fieldset>
 
@@ -152,7 +154,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
                     placeholder="Email"
                     name="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                   />
                 </fieldset>
 
@@ -163,14 +165,11 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
                     placeholder="New Password"
                     name="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                   />
                 </fieldset>
 
-                <button
-                  className="btn btn-lg btn-primary pull-xs-right"
-                  type="submit"
-                >
+                <button className="btn btn-lg btn-primary pull-xs-right" type="submit">
                   Update Settings
                 </button>
               </fieldset>
@@ -178,10 +177,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
 
             <hr />
 
-            <button
-              className="btn btn-outline-danger"
-              onClick={onLogout}
-            >
+            <button className="btn btn-outline-danger" onClick={onLogout}>
               Or click here to logout.
             </button>
           </div>

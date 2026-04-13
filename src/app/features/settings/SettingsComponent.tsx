@@ -39,7 +39,7 @@ const ListErrors: React.FC<{ errors: Errors | null }> = ({ errors }) => {
   if (!errors) return null;
   return (
     <ul className="error-messages">
-      {Object.entries(errors.errors).map(([field, messages]) =>
+      {Object.entries(errors.errors || {}).map(([field, messages]) =>
         messages.map((msg, i) => (
           <li key={`${field}-${i}`}>
             {field} {msg}
@@ -64,6 +64,12 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
   const [errors, setErrors] = useState<Errors | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const initialized = useRef(false);
+  const mountedRef = useRef(true);
+
+  // Track mount state for async cleanup (replaces takeUntilDestroyed)
+  useEffect(() => {
+    return () => { mountedRef.current = false; };
+  }, []);
 
   // Replaces ngOnInit — patch form with current user data (runs once on mount)
   useEffect(() => {
@@ -85,9 +91,11 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
 
     updateUser({ image, username, bio, email, password })
       .then(({ user }) => {
+        if (!mountedRef.current) return;
         onNavigateToProfile(user.username);
       })
       .catch((err: Errors) => {
+        if (!mountedRef.current) return;
         setErrors(err);
         setIsSubmitting(false);
       });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, useRef, FormEvent } from 'react';
 
 /**
  * React port of Angular SettingsComponent
@@ -63,9 +63,12 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Errors | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const initialized = useRef(false);
 
-  // Replaces ngOnInit — patch form with current user data
+  // Replaces ngOnInit — patch form with current user data (runs once on mount)
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
     const user = getCurrentUser();
     if (user) {
       setImage(user.image ?? '');

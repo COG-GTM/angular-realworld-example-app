@@ -68,6 +68,7 @@ export const SettingsComponent: React.FC<SettingsComponentProps> = ({
 
   // Track mount state for async cleanup (replaces takeUntilDestroyed)
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
     };

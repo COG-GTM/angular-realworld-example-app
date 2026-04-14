@@ -10,7 +10,7 @@ export default defineConfig({
 
   use: {
     ...baseConfig.use,
-    baseURL: 'http://localhost:4200',
+    baseURL: process.env.BASE_URL || 'http://localhost:4200/',
   },
 
   webServer: {

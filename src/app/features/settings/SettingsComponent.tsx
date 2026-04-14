@@ -77,7 +77,7 @@ interface SettingsComponentDeps {
   /** Returns the currently authenticated user, or null. Replaces UserService.getCurrentUserSync(). */
   getCurrentUser: () => User | null;
   /** Calls the update API. Replaces UserService.update(). Returns a promise resolving to { user: User }. */
-  updateUser: (user: Partial<User>) => Promise<{ user: User }>;
+  updateUser: (user: Partial<User> & { password?: string }) => Promise<{ user: User }>;
   /** Logs the user out. Replaces UserService.logout(). */
   logout: () => void;
   /** Navigates to a path. Replaces Router.navigate(). */

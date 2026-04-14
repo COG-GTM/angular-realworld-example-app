@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
 
 /**
  * Mirrors the Angular Errors model from core/models/errors.model.ts
@@ -49,9 +49,7 @@ function ListErrors({ errors }: ListErrorsProps) {
     return null;
   }
 
-  const errorList = Object.keys(errors.errors || {}).map(
-    (key) => `${key} ${errors.errors[key]}`,
-  );
+  const errorList = Object.keys(errors.errors || {}).map(key => `${key} ${errors.errors[key]}`);
 
   if (errorList.length === 0) {
     return null;
@@ -59,7 +57,7 @@ function ListErrors({ errors }: ListErrorsProps) {
 
   return (
     <ul className="error-messages">
-      {errorList.map((message) => (
+      {errorList.map(message => (
         <li key={message}>{message}</li>
       ))}
     </ul>
@@ -99,20 +97,15 @@ interface SettingsComponentDeps {
  * TODO: Wire up real implementations for getCurrentUser, updateUser, logout, and navigateTo
  *       via React context or a custom hook (e.g. useUserService, useRouter).
  */
-export const SettingsComponent = ({
-  getCurrentUser,
-  updateUser,
-  logout,
-  navigateTo,
-}: SettingsComponentDeps) => {
+export const SettingsComponent = ({ getCurrentUser, updateUser, logout, navigateTo }: SettingsComponentDeps) => {
   // --- State (replaces Angular signals and FormGroup) ---
 
   const [formState, setFormState] = useState<SettingsFormState>({
-    image: "",
-    username: "",
-    bio: "",
-    email: "",
-    password: "",
+    image: '',
+    username: '',
+    bio: '',
+    email: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState<Errors | null>(null);
@@ -120,15 +113,23 @@ export const SettingsComponent = ({
 
   // --- Lifecycle: ngOnInit equivalent ---
   // Load the current user on mount and populate the form.
+  // Uses a ref guard to ensure this runs exactly once, mirroring Angular's ngOnInit.
+
+  const initializedRef = useRef(false);
 
   useEffect(() => {
+    if (initializedRef.current) {
+      return;
+    }
+    initializedRef.current = true;
+
     const user = getCurrentUser();
     if (user) {
-      setFormState((prev) => ({
+      setFormState(prev => ({
         ...prev,
-        image: user.image ?? "",
+        image: user.image ?? '',
         username: user.username,
-        bio: user.bio ?? "",
+        bio: user.bio ?? '',
         email: user.email,
         // password is intentionally left blank (same as Angular patchValue behavior)
       }));
@@ -141,11 +142,9 @@ export const SettingsComponent = ({
    * Generic change handler for all text/email/password inputs and textarea.
    * Replaces Angular reactive form's formControlName two-way binding.
    */
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
 
   /**
@@ -249,10 +248,7 @@ export const SettingsComponent = ({
                   />
                 </fieldset>
 
-                <button
-                  className="btn btn-lg btn-primary pull-xs-right"
-                  type="submit"
-                >
+                <button className="btn btn-lg btn-primary pull-xs-right" type="submit">
                   Update Settings
                 </button>
               </fieldset>
@@ -261,10 +257,7 @@ export const SettingsComponent = ({
             {/* Line break for logout button */}
             <hr />
 
-            <button
-              className="btn btn-outline-danger"
-              onClick={handleLogout}
-            >
+            <button className="btn btn-outline-danger" onClick={handleLogout}>
               Or click here to logout.
             </button>
           </div>

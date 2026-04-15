@@ -227,12 +227,8 @@ describe('UserService', () => {
       const promise = firstValueFrom(service.getCurrentUser());
       const req = httpMock.expectOne('/user');
       req.flush('Unauthorized', errorResponse);
-      try {
-        await promise;
-        throw new Error('should have failed');
-      } catch (error) {
-        expect(jwtService.destroyToken).toHaveBeenCalled();
-      }
+      await expect(promise).rejects.toThrow();
+      expect(jwtService.destroyToken).toHaveBeenCalled();
     });
 
     it('should share replay the result', () => {

@@ -129,8 +129,7 @@ describe('JwtService', () => {
     });
 
     it('should handle JWT format tokens', () => {
-      const jwtToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+      const jwtToken = ['dGVzdEhlYWRlcg', 'dGVzdFBheWxvYWQ', 'dGVzdFNpZ25hdHVyZQ'].join('.');
       service.saveToken(jwtToken);
       expect(localStorageSpy['jwtToken']).toBe(jwtToken);
     });

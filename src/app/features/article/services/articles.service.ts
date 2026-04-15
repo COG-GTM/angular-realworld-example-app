@@ -13,9 +13,11 @@ export class ArticlesService {
     // Convert any filters over to Angular's URLSearchParams
     let params = new HttpParams();
 
-    Object.keys(config.filters).forEach(key => {
-      // @ts-ignore
-      params = params.set(key, config.filters[key]);
+    const filters = config.filters;
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        params = params.set(key, String(value));
+      }
     });
 
     return this.http.get<{ articles: Article[]; articlesCount: number }>(

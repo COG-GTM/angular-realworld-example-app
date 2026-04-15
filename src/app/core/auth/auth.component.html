@@ -32,7 +32,8 @@
                 name="email"
                 placeholder="Email"
                 class="form-control form-control-lg"
-                type="text"
+                type="email"
+                autocomplete="email"
               />
             </fieldset>
             <fieldset class="form-group">
@@ -42,6 +43,7 @@
                 placeholder="Password"
                 class="form-control form-control-lg"
                 type="password"
+                autocomplete="current-password"
               />
             </fieldset>
             <button class="btn btn-lg btn-primary pull-xs-right" [disabled]="!authForm.valid" type="submit">

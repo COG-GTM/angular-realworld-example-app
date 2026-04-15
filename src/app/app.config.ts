@@ -29,19 +29,22 @@ declare global {
 
 /**
  * Sets up the debug interface on window.__conduit_debug__
+ * Only enabled in non-production environments to prevent information exposure.
  */
 function setupDebugInterface(jwtService: JwtService, userService: UserService): void {
-  let currentAuthState: AuthState = 'loading';
-  let currentUser: User | null = null;
+  if (typeof ngDevMode !== 'undefined' && ngDevMode) {
+    let currentAuthState: AuthState = 'loading';
+    let currentUser: User | null = null;
 
-  userService.authState.subscribe(state => (currentAuthState = state));
-  userService.currentUser.subscribe(user => (currentUser = user));
+    userService.authState.subscribe(state => (currentAuthState = state));
+    userService.currentUser.subscribe(user => (currentUser = user));
 
-  window.__conduit_debug__ = {
-    getToken: () => jwtService.getToken(),
-    getAuthState: () => currentAuthState,
-    getCurrentUser: () => currentUser,
-  };
+    window.__conduit_debug__ = {
+      getToken: () => jwtService.getToken(),
+      getAuthState: () => currentAuthState,
+      getCurrentUser: () => currentUser,
+    };
+  }
 }
 
 /**

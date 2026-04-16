@@ -18,6 +18,9 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
     const error = await response.json().catch(() => ({ errors: { body: ['Unknown error'] } }));
     throw error;
   }
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as T;
+  }
   return response.json();
 }
 

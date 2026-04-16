@@ -36,11 +36,14 @@ function ArticlePage() {
   };
 
   const handleFavoriteToggle = async (a: Article) => {
-    const updated = a.favorited
-      ? { ...a, favorited: false, favoritesCount: a.favoritesCount - 1 }
-      : await favoriteArticle(a.slug);
-    if (a.favorited) await unfavoriteArticle(a.slug);
-    setArticle(updated);
+    try {
+      const updated = a.favorited
+        ? await unfavoriteArticle(a.slug)
+        : await favoriteArticle(a.slug);
+      setArticle(updated);
+    } catch (e) {
+      console.error('Failed to toggle favorite:', e);
+    }
   };
 
   const handleFollowToggle = (profile: Profile) => {

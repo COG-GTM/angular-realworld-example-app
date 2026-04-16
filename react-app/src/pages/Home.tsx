@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getTags } from '../services/tags.service';
@@ -28,11 +28,11 @@ function Home() {
     }
   }, [feed, isAuthenticated, navigate]);
 
-  const listConfig: ArticleListConfig = tag
+  const listConfig: ArticleListConfig = useMemo(() => tag
     ? { type: 'all', filters: { tag } }
     : feed === 'following'
       ? { type: 'feed', filters: {} }
-      : { type: 'all', filters: {} };
+      : { type: 'all', filters: {} }, [tag, feed]);
 
   const handlePageChange = useCallback((page: number) => {
     const params: Record<string, string> = {};

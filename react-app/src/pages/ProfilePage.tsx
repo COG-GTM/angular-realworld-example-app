@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { Profile } from '../models/profile';
 import { ArticleListConfig } from '../models/article';
@@ -38,9 +38,9 @@ function ProfilePage() {
 
   const defaultImage = '/default-avatar.svg';
 
-  const listConfig: ArticleListConfig = isFavorites
+  const listConfig: ArticleListConfig = useMemo(() => isFavorites
     ? { type: 'all', filters: { favorited: username } }
-    : { type: 'all', filters: { author: username } };
+    : { type: 'all', filters: { author: username } }, [isFavorites, username]);
 
   return (
     <div className="profile-page">

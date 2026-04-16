@@ -18,8 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tag/:tag" element={<Home />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/register" element={<Auth />} />
+          <Route path="/login" element={<Auth key="login" />} />
+          <Route path="/register" element={<Auth key="register" />} />
           <Route path="/article/:slug" element={<ArticlePage />} />
           <Route path="/editor" element={<Editor />} />
           <Route path="/editor/:slug" element={<Editor />} />

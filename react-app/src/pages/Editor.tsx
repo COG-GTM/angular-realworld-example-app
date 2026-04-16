@@ -22,6 +22,11 @@ function Editor() {
         setBody(article.body);
         setTagList(article.tagList);
       }).catch(console.error);
+    } else {
+      setTitle('');
+      setDescription('');
+      setBody('');
+      setTagList([]);
     }
   }, [slug]);
 

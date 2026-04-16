@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 import { Article } from '../models/article';
 import { Comment } from '../models/comment';
 import { getArticle, deleteArticle, favoriteArticle, unfavoriteArticle } from '../services/articles.service';
@@ -110,7 +112,7 @@ function ArticlePage() {
       <div className="container page">
         <div className="row article-content">
           <div className="col-md-12">
-            <div dangerouslySetInnerHTML={{ __html: article.body }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(article.body) as string) }} />
             {article.tagList.length > 0 && (
               <ul className="tag-list">
                 {article.tagList.map((tag) => (

@@ -27,7 +27,7 @@ function ProfilePage() {
     }
   }, [username]);
 
-  useEffect(() => { setCurrentPage(1); }, [isFavorites]);
+  useEffect(() => { setCurrentPage(1); }, [isFavorites, username]);
 
   const handleFollowToggle = useCallback((p: Profile) => {
     setProfile(p);

@@ -153,7 +153,7 @@ function ArticlePage() {
               </p>
             )}
             {comments.map((comment) => (
-              <div key={comment.id} className="card">
+              <div key={comment.id} className="card comment">
                 <div className="card-block">
                   <p className="card-text">{comment.body}</p>
                 </div>

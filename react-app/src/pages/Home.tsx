@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getTags } from '../services/tags.service';
 import { ArticleListConfig } from '../models/article';
@@ -62,23 +62,21 @@ function Home() {
               <ul className="nav nav-pills outline-active">
                 {isAuthenticated && (
                   <li className="nav-item">
-                    <a
+                    <Link
                       className={`nav-link ${isYourFeed ? 'active' : ''}`}
-                      href=""
-                      onClick={(e) => { e.preventDefault(); setSearchParams({ feed: 'following' }); }}
+                      to="/?feed=following"
                     >
                       Your Feed
-                    </a>
+                    </Link>
                   </li>
                 )}
                 <li className="nav-item">
-                  <a
+                  <Link
                     className={`nav-link ${isGlobalFeed ? 'active' : ''}`}
-                    href=""
-                    onClick={(e) => { e.preventDefault(); setSearchParams({}); navigate('/'); }}
+                    to="/"
                   >
                     Global Feed
-                  </a>
+                  </Link>
                 </li>
                 {tag && (
                   <li className="nav-item">

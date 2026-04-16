@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Article, ArticleListConfig } from '../models/article';
 import { getArticles, favoriteArticle, unfavoriteArticle } from '../services/articles.service';
 import ArticlePreview from './ArticlePreview';
@@ -40,7 +41,17 @@ function ArticleList({ config, currentPage, onPageChange }: Props) {
   }, []);
 
   if (loading) return <div className="article-preview">Loading articles...</div>;
-  if (articles.length === 0) return <div className="article-preview">No articles are here... yet.</div>;
+  if (articles.length === 0) {
+    return (
+      <div className="article-preview empty-feed-message">
+        {config.type === 'feed' ? (
+          <>Your feed is empty. <Link to="/">Check out the Global Feed.</Link></>
+        ) : (
+          'No articles are here... yet.'
+        )}
+      </div>
+    );
+  }
 
   const totalPages = Math.ceil(articlesCount / LIMIT);
 

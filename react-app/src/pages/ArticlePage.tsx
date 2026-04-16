@@ -55,7 +55,7 @@ function ArticlePage() {
   const handleAddComment = async () => {
     if (slug && commentBody.trim()) {
       const comment = await addComment(slug, commentBody);
-      setComments([comment, ...comments]);
+      setComments((prev) => [comment, ...prev]);
       setCommentBody('');
     }
   };
@@ -63,7 +63,7 @@ function ArticlePage() {
   const handleDeleteComment = async (commentId: string) => {
     if (slug) {
       await deleteComment(slug, commentId);
-      setComments(comments.filter((c) => c.id !== commentId));
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
     }
   };
 
@@ -153,7 +153,7 @@ function ArticlePage() {
               </p>
             )}
             {comments.map((comment) => (
-              <div key={comment.id} className="comment">
+              <div key={comment.id} className="card">
                 <div className="card-block">
                   <p className="card-text">{comment.body}</p>
                 </div>

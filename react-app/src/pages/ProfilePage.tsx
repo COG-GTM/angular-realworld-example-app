@@ -33,14 +33,14 @@ function ProfilePage() {
     setProfile(p);
   }, []);
 
+  const listConfig: ArticleListConfig = useMemo(() => isFavorites
+    ? { type: 'all', filters: { favorited: username } }
+    : { type: 'all', filters: { author: username } }, [isFavorites, username]);
+
   if (loading) return <div className="profile-page"><div className="container">Loading...</div></div>;
   if (!profile) return <div className="profile-page"><div className="container">Profile not found</div></div>;
 
   const defaultImage = '/default-avatar.svg';
-
-  const listConfig: ArticleListConfig = useMemo(() => isFavorites
-    ? { type: 'all', filters: { favorited: username } }
-    : { type: 'all', filters: { author: username } }, [isFavorites, username]);
 
   return (
     <div className="profile-page">

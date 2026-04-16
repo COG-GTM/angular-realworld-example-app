@@ -18,15 +18,19 @@ function ArticleList({ config, currentPage, onPageChange }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     const filters = { ...config.filters, limit: LIMIT, offset: (currentPage - 1) * LIMIT };
     getArticles({ ...config, filters })
       .then((data) => {
-        setArticles(data.articles);
-        setArticlesCount(data.articlesCount);
-        setLoading(false);
+        if (!cancelled) {
+          setArticles(data.articles);
+          setArticlesCount(data.articlesCount);
+          setLoading(false);
+        }
       })
-      .catch(() => setLoading(false));
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [config, currentPage]);
 
   const handleFavoriteToggle = useCallback(async (article: Article) => {

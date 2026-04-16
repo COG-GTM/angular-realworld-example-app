@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { updateUser } from '../services/auth.service';
@@ -13,6 +13,15 @@ function Settings() {
   const [email, setEmail] = useState(user?.email || '');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setImage(user.image || '');
+      setUsername(user.username || '');
+      setBio(user.bio || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {

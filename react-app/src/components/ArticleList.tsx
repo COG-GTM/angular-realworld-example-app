@@ -31,9 +31,7 @@ function ArticleList({ config, currentPage, onPageChange }: Props) {
   const handleFavoriteToggle = useCallback(async (article: Article) => {
     try {
       const updated = article.favorited
-        ? await unfavoriteArticle(article.slug).then(() => ({
-            ...article, favorited: false, favoritesCount: article.favoritesCount - 1,
-          }))
+        ? await unfavoriteArticle(article.slug)
         : await favoriteArticle(article.slug);
       setArticles((prev) => prev.map((a) => (a.slug === updated.slug ? updated : a)));
     } catch (e) {

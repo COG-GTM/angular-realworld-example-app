@@ -36,7 +36,7 @@ function ProfilePage() {
   if (loading) return <div className="profile-page"><div className="container">Loading...</div></div>;
   if (!profile) return <div className="profile-page"><div className="container">Profile not found</div></div>;
 
-  const defaultImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
+  const defaultImage = '/default-avatar.svg';
 
   const listConfig: ArticleListConfig = isFavorites
     ? { type: 'all', filters: { favorited: username } }

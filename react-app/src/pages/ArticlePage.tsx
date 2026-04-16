@@ -71,7 +71,7 @@ function ArticlePage() {
   if (!article) return <div className="article-page"><div className="container">Article not found</div></div>;
 
   const isAuthor = user?.username === article.author.username;
-  const defaultImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
+  const defaultImage = '/default-avatar.svg';
 
   const ArticleMeta = () => (
     <div className="article-meta">

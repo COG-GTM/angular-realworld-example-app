@@ -55,6 +55,7 @@ function Auth() {
                     className="form-control form-control-lg"
                     type="text"
                     placeholder="Username"
+                    name="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
@@ -65,6 +66,7 @@ function Auth() {
                   className="form-control form-control-lg"
                   type="text"
                   placeholder="Email"
+                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -74,6 +76,7 @@ function Auth() {
                   className="form-control form-control-lg"
                   type="password"
                   placeholder="Password"
+                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />

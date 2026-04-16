@@ -72,13 +72,13 @@ function Editor() {
             <form onSubmit={handleSubmit}>
               <fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control form-control-lg" type="text" placeholder="Article Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                  <input className="form-control form-control-lg" type="text" placeholder="Article Title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control" type="text" placeholder="What's this article about?" value={description} onChange={(e) => setDescription(e.target.value)} />
+                  <input className="form-control" type="text" placeholder="What's this article about?" name="description" value={description} onChange={(e) => setDescription(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <textarea className="form-control" rows={8} placeholder="Write your article (in markdown)" value={body} onChange={(e) => setBody(e.target.value)} />
+                  <textarea className="form-control" rows={8} placeholder="Write your article (in markdown)" name="body" value={body} onChange={(e) => setBody(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
                   <input className="form-control" type="text" placeholder="Enter tags" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleAddTag} />

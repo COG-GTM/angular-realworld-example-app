@@ -48,19 +48,19 @@ function Settings() {
             <form onSubmit={handleSubmit}>
               <fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control" type="text" placeholder="URL of profile picture" value={image} onChange={(e) => setImage(e.target.value)} />
+                  <input className="form-control" type="text" placeholder="URL of profile picture" name="image" value={image} onChange={(e) => setImage(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control form-control-lg" type="text" placeholder="Your Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+                  <input className="form-control form-control-lg" type="text" placeholder="Your Name" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <textarea className="form-control form-control-lg" rows={8} placeholder="Short bio about you" value={bio} onChange={(e) => setBio(e.target.value)} />
+                  <textarea className="form-control form-control-lg" rows={8} placeholder="Short bio about you" name="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control form-control-lg" type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input className="form-control form-control-lg" type="text" placeholder="Email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </fieldset>
                 <fieldset className="form-group">
-                  <input className="form-control form-control-lg" type="password" placeholder="New Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <input className="form-control form-control-lg" type="password" placeholder="New Password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </fieldset>
                 <button className="btn btn-lg btn-primary pull-xs-right" type="submit" disabled={submitting}>
                   Update Settings

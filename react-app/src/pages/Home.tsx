@@ -62,21 +62,23 @@ function Home() {
               <ul className="nav nav-pills outline-active">
                 {isAuthenticated && (
                   <li className="nav-item">
-                    <button
+                    <a
                       className={`nav-link ${isYourFeed ? 'active' : ''}`}
-                      onClick={() => setSearchParams({ feed: 'following' })}
+                      href=""
+                      onClick={(e) => { e.preventDefault(); setSearchParams({ feed: 'following' }); }}
                     >
                       Your Feed
-                    </button>
+                    </a>
                   </li>
                 )}
                 <li className="nav-item">
-                  <button
+                  <a
                     className={`nav-link ${isGlobalFeed ? 'active' : ''}`}
-                    onClick={() => { setSearchParams({}); navigate('/'); }}
+                    href=""
+                    onClick={(e) => { e.preventDefault(); setSearchParams({}); navigate('/'); }}
                   >
                     Global Feed
-                  </button>
+                  </a>
                 </li>
                 {tag && (
                   <li className="nav-item">

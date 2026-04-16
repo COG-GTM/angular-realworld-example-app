@@ -8,7 +8,7 @@ interface Props {
 }
 
 function ArticlePreview({ article, onFavoriteToggle }: Props) {
-  const defaultImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
+  const defaultImage = '/default-avatar.svg';
 
   return (
     <div className="article-preview">

@@ -5,11 +5,10 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
   plugins: [angular()],
   test: {
-    globals: false,
+    globals: true,
     environment: 'jsdom',
-    setupFiles: [fileURLToPath(new URL('./src/test-setup.ts', import.meta.url))],
+    setupFiles: [fileURLToPath(new URL('./src/test-setup.js', import.meta.url))],
     include: ['src/**/*.spec.ts'],
-    pool: 'threads',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

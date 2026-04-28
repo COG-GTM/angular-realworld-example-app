@@ -15,7 +15,7 @@ import { ArticleListConfig } from '../../models/article-list-config.model';
 
 @Component({ selector: 'app-article-list', template: '', standalone: true })
 class MockArticleListComponent {
-  @Input() listConfig!: ArticleListConfig;
+  @Input() config!: ArticleListConfig;
   @Input() currentPage!: number;
 }
 

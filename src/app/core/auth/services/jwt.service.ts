@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { LOCAL_STORAGE } from './storage.token';
 
 @Injectable({ providedIn: 'root' })
 export class JwtService {
+  private storage = inject(LOCAL_STORAGE);
+
   getToken(): string {
-    return window.localStorage['jwtToken'];
+    return this.storage.getItem('jwtToken') ?? '';
   }
 
   saveToken(token: string): void {
-    window.localStorage['jwtToken'] = token;
+    this.storage.setItem('jwtToken', token);
   }
 
   destroyToken(): void {
-    window.localStorage.removeItem('jwtToken');
+    this.storage.removeItem('jwtToken');
   }
 }

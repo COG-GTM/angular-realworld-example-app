@@ -29,7 +29,7 @@
     "@angular/animations": "21.1.1",
     "@angular/common": "21.1.1",
     "@angular/compiler": "21.1.1",
-    "@angular/core": "21.2.4",
+    "@angular/core": "21.1.1",
     "@angular/forms": "21.1.1",
     "@angular/platform-browser": "21.1.1",
     "@angular/platform-browser-dynamic": "21.1.1",
@@ -54,7 +54,8 @@
     "playwright": "^1.58.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "zone.js": "^0.16.1"
   },
   "lint-staged": {
     "*.{ts,html,css,json,md}": "prettier --write"

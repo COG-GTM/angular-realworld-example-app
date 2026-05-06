@@ -25,7 +25,7 @@ export function ProfilePage() {
         setIsUser(p.username === currentUser?.username);
       })
       .catch((error) => {
-        setErrors(error.errors ? error : { errors: { error: 'Failed to load profile' } });
+        setErrors(error.errors ? error : { errors: { error: ['Failed to load profile'] } });
       });
   }, [username, currentUser]);
 

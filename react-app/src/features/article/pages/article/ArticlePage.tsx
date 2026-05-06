@@ -42,7 +42,7 @@ export function ArticlePage() {
         renderMarkdown(articleData.body).then(setBodyHtml);
       })
       .catch((err) => {
-        setErrors(err.errors ? err : { errors: { error: 'Failed to load article' } });
+        setErrors(err.errors ? err : { errors: { error: ['Failed to load article'] } });
       });
   }, [slug, currentUser]);
 
@@ -67,8 +67,12 @@ export function ArticlePage() {
   const deleteArticle = async () => {
     if (!article) return;
     setIsDeleting(true);
-    await ArticlesService.delete(article.slug);
-    navigate('/');
+    try {
+      await ArticlesService.delete(article.slug);
+      navigate('/');
+    } catch {
+      setIsDeleting(false);
+    }
   };
 
   const addComment = async () => {

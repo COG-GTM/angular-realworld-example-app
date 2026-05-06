@@ -43,6 +43,9 @@ export function ArticleList({ limit, config, currentPage = 1, isFollowingFeed = 
       setTotalPages(
         Array.from(new Array(Math.ceil(data.articlesCount / limit)), (_, index) => index + 1),
       );
+    }).catch(() => {
+      setLoading(LoadingState.LOADED);
+      setResults([]);
     });
   }, [config, page, limit]);
 

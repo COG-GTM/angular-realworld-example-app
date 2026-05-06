@@ -7,7 +7,9 @@ interface ListErrorsProps {
 export function ListErrors({ errors }: ListErrorsProps) {
   if (!errors || !errors.errors) return null;
 
-  const errorList = Object.keys(errors.errors).map((key) => `${key} ${errors.errors[key]}`);
+  const errorList = Object.entries(errors.errors).flatMap(([key, messages]) =>
+    messages.map((msg) => `${key} ${msg}`),
+  );
 
   if (errorList.length === 0) return null;
 

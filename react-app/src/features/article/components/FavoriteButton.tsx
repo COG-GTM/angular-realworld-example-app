@@ -44,6 +44,7 @@ export function FavoriteButton({ article, onToggle, children, className }: Favor
         article.favorited ? 'btn-primary' : 'btn-outline-primary'
       } ${className || ''}`}
       onClick={toggleFavorite}
+      disabled={isSubmitting}
     >
       <i className="ion-heart"></i> {children}
     </button>

@@ -39,6 +39,7 @@ export function FollowButton({ profile, onToggle }: FollowButtonProps) {
         profile.following ? 'btn-secondary' : 'btn-outline-secondary'
       }`}
       onClick={toggleFollowing}
+      disabled={isSubmitting}
     >
       <i className="ion-plus-round"></i>
       &nbsp;

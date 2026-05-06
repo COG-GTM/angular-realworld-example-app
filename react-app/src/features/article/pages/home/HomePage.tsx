@@ -8,7 +8,7 @@ import { TagsService } from '../../services/tags.service';
 export function HomePage() {
   const { tag } = useParams<{ tag?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, authState } = useUser();
   const navigate = useNavigate();
 
   const feed = searchParams.get('feed');
@@ -32,6 +32,8 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
+    if (authState === 'loading') return;
+
     if (feed === 'following' && !isAuthenticated) {
       navigate('/login');
       return;
@@ -51,7 +53,7 @@ export function HomePage() {
 
     setListConfig({ type, filters });
     setIsFollowingFeed(type === 'feed');
-  }, [tag, feed, isAuthenticated, navigate]);
+  }, [tag, feed, isAuthenticated, authState, navigate]);
 
   const onPageChange = (page: number) => {
     const params: Record<string, string> = {};

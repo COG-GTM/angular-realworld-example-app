@@ -22,7 +22,6 @@ export function ArticlePage() {
 
   const [article, setArticle] = useState<Article | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [canModify, setCanModify] = useState(false);
   const [errors, setErrors] = useState<Errors | null>(null);
   const [commentBody, setCommentBody] = useState('');
   const [commentFormErrors, setCommentFormErrors] = useState<Errors | null>(null);
@@ -38,13 +37,14 @@ export function ArticlePage() {
       .then(([articleData, commentsData]) => {
         setArticle(articleData);
         setComments(commentsData);
-        setCanModify(currentUser?.username === articleData.author.username);
         renderMarkdown(articleData.body).then(setBodyHtml);
       })
       .catch((err) => {
         setErrors(err.errors ? err : { errors: { error: ['Failed to load article'] } });
       });
-  }, [slug, currentUser]);
+  }, [slug]);
+
+  const canModify = currentUser?.username === article?.author.username;
 
   const onToggleFavorite = (favorited: boolean) => {
     setArticle((prev) => {

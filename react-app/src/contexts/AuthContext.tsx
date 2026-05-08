@@ -97,6 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return updated;
   }, []);
 
+  useEffect(() => {
+    window.__conduit_debug__ = {
+      getToken: () => Auth.getToken(),
+      getAuthState: () => authState,
+      getCurrentUser: () => user,
+    };
+  }, [authState, user]);
+
   return (
     <AuthContext.Provider
       value={{

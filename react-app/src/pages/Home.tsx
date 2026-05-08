@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArticleList } from '../components/ArticleList';
@@ -23,7 +23,7 @@ export function Home() {
       .finally(() => setTagsLoading(false));
   }, []);
 
-  const config: ArticleListConfig = (() => {
+  const config: ArticleListConfig = useMemo(() => {
     if (tag) {
       return { type: 'all', filters: { tag, limit: 10 } };
     }
@@ -31,7 +31,7 @@ export function Home() {
       return { type: 'feed', filters: { limit: 10 } };
     }
     return { type: 'all', filters: { limit: 10 } };
-  })();
+  }, [tag, feedType]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);

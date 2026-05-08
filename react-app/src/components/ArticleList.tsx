@@ -17,6 +17,7 @@ export function ArticleList({ config, currentPage, onPageChange }: ArticleListPr
   const limit = config.filters.limit || 10;
 
   useEffect(() => {
+    let stale = false;
     setLoading(true);
     const params: Record<string, string | number> = {
       ...config.filters,
@@ -27,14 +28,19 @@ export function ArticleList({ config, currentPage, onPageChange }: ArticleListPr
     const fetchFn = config.type === 'feed' ? Articles.feed : Articles.all;
     fetchFn(params)
       .then((data) => {
-        setArticles(data.articles);
-        setArticlesCount(data.articlesCount);
+        if (!stale) {
+          setArticles(data.articles);
+          setArticlesCount(data.articlesCount);
+        }
       })
       .catch(() => {
-        setArticles([]);
-        setArticlesCount(0);
+        if (!stale) {
+          setArticles([]);
+          setArticlesCount(0);
+        }
       })
-      .finally(() => setLoading(false));
+      .finally(() => { if (!stale) setLoading(false); });
+    return () => { stale = true; };
   }, [config, currentPage, limit]);
 
   const handleFavoriteToggle = (updated: Article) => {

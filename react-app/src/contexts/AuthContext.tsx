@@ -92,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = useCallback(async (userData: Partial<User>): Promise<User> => {
     const { user: updated } = await Auth.update(userData);
+    Auth.saveToken(updated.token);
     setUser(updated);
     return updated;
   }, []);

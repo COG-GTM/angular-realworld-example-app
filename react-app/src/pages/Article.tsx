@@ -1,6 +1,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { Article as ArticleModel, Comment, Profile } from '../models';
 import { Articles, Comments } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -104,7 +105,7 @@ export function Article() {
     </div>
   );
 
-  const htmlBody = marked(article.body, { async: false }) as string;
+  const htmlBody = DOMPurify.sanitize(marked(article.body, { async: false }) as string);
 
   return (
     <div className="article-page">

@@ -24,8 +24,7 @@ export function FavoriteButton({ article, compact, onToggle }: FavoriteButtonPro
     setSubmitting(true);
     try {
       if (article.favorited) {
-        await Articles.unfavorite(article.slug);
-        const updated = { ...article, favorited: false, favoritesCount: article.favoritesCount - 1 };
+        const updated = await Articles.unfavorite(article.slug);
         onToggle?.(updated);
       } else {
         const updated = await Articles.favorite(article.slug);

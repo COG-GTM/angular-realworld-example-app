@@ -32,6 +32,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     const error = await response.json().catch(() => ({
       errors: { error: [`${response.status} ${response.statusText}`] },
     }));
+    error.status = response.status;
     throw error;
   }
 
@@ -102,7 +103,10 @@ export const Articles = {
     request<{ article: import('../models').Article }>(`/articles/${slug}/favorite`, {
       method: 'POST',
     }).then(data => data.article),
-  unfavorite: (slug: string) => request<void>(`/articles/${slug}/favorite`, { method: 'DELETE' }),
+  unfavorite: (slug: string) =>
+    request<{ article: import('../models').Article }>(`/articles/${slug}/favorite`, { method: 'DELETE' }).then(
+      data => data.article,
+    ),
 };
 
 export const Comments = {

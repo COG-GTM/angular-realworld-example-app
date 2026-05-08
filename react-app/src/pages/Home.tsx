@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ArticleList } from '../components/ArticleList';
 import { Tags } from '../services/api';
@@ -8,6 +8,7 @@ import { ArticleListConfig } from '../models';
 export function Home() {
   const { tag } = useParams<{ tag: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { isAuthenticated, authState } = useAuth();
   const [tags, setTags] = useState<string[]>([]);
   const [tagsLoading, setTagsLoading] = useState(true);
@@ -39,7 +40,11 @@ export function Home() {
   };
 
   const setFeed = (type: string) => {
-    setSearchParams({ feed: type });
+    if (tag) {
+      navigate(`/?feed=${type}`);
+    } else {
+      setSearchParams({ feed: type });
+    }
   };
 
   return (

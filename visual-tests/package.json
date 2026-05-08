@@ -1,0 +1,20 @@
+{
+  "name": "visual-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture:source": "tsx capture-both.ts source",
+    "capture:react": "tsx capture-both.ts react",
+    "capture:both": "tsx capture-both.ts both",
+    "compare": "tsx compare.ts"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.2",
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.59.1",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.21.0"
+  }
+}

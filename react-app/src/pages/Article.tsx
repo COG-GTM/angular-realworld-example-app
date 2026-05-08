@@ -52,7 +52,7 @@ export function Article() {
     setErrors({});
     try {
       const comment = await Comments.add(slug, commentBody);
-      setComments([comment, ...comments]);
+      setComments(prev => [comment, ...prev]);
       setCommentBody('');
     } catch (err: unknown) {
       const apiErr = err as { errors?: Record<string, string[]> };
@@ -65,7 +65,7 @@ export function Article() {
   const handleDeleteComment = async (commentId: string) => {
     if (!slug) return;
     await Comments.delete(slug, commentId);
-    setComments(comments.filter((c) => c.id !== commentId));
+    setComments(prev => prev.filter((c) => c.id !== commentId));
   };
 
   const renderArticleMeta = () => (

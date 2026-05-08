@@ -14,10 +14,12 @@ export function Profile() {
   const [profile, setProfile] = useState<ProfileModel | null>(null);
 
   useEffect(() => {
+    let stale = false;
     if (!username) return;
     Profiles.get(username)
-      .then(setProfile)
-      .catch(() => navigate('/'));
+      .then((data) => { if (!stale) setProfile(data); })
+      .catch(() => { if (!stale) navigate('/'); });
+    return () => { stale = true; };
   }, [username, navigate]);
 
   if (!profile) {

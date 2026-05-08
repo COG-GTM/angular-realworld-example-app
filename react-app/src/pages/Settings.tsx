@@ -29,8 +29,8 @@ export function Settings() {
     try {
       const payload: Record<string, string> = { image, username, bio, email };
       if (password) payload.password = password;
-      await updateUser(payload as unknown as Parameters<typeof updateUser>[0]);
-      navigate(`/profile/${username}`);
+      const updated = await updateUser(payload as unknown as Parameters<typeof updateUser>[0]);
+      navigate(`/profile/${updated.username}`);
     } catch (err: unknown) {
       const apiErr = err as { errors?: Record<string, string[]> };
       if (apiErr.errors) {

@@ -21,9 +21,11 @@ export function Article() {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
+    let stale = false;
     if (!slug) return;
-    Articles.get(slug).then(setArticle).catch(() => navigate('/'));
-    Comments.getAll(slug).then(setComments).catch(() => setComments([]));
+    Articles.get(slug).then((data) => { if (!stale) setArticle(data); }).catch(() => { if (!stale) navigate('/'); });
+    Comments.getAll(slug).then((data) => { if (!stale) setComments(data); }).catch(() => { if (!stale) setComments([]); });
+    return () => { stale = true; };
   }, [slug, navigate]);
 
   if (!article) {

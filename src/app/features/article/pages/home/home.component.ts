@@ -46,7 +46,7 @@ export default class HomeComponent implements OnInit {
 
         const tag = params['tag'];
         const feed = queryParams['feed'];
-        const page = queryParams['page'] ? parseInt(queryParams['page'], 10) : 1;
+        const page = queryParams['page'] ? Number.parseInt(queryParams['page'], 10) : 1;
 
         // If feed=following but not authenticated, redirect to login
         if (feed === 'following' && !isAuthenticated) {

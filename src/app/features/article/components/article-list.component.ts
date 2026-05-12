@@ -98,7 +98,7 @@ export class ArticleListComponent implements OnChanges {
     }
   }
 
-  constructor(private articlesService: ArticlesService) {}
+  constructor(private readonly articlesService: ArticlesService) {}
 
   setPageTo(pageNumber: number) {
     if (pageNumber !== this.page()) {

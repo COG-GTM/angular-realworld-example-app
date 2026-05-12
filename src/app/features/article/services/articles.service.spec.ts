@@ -2,7 +2,7 @@ import 'zone.js';
 import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
-import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { ArticlesService } from './articles.service';
@@ -11,7 +11,7 @@ import { ArticleListConfig } from '../models/article-list-config.model';
 
 describe('ArticlesService', () => {
   beforeAll(() => {
-    getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+    getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
   });
 
   let service: ArticlesService;
@@ -115,7 +115,7 @@ describe('ArticlesService', () => {
       req.flush({ articles: mockArticleList, articlesCount: 2 });
     });
 
-    it('should handle pagination parameters', () => {
+    it('should handle pagination parameters', async () => {
       const config: ArticleListConfig = {
         type: 'all',
         filters: {
@@ -124,7 +124,7 @@ describe('ArticlesService', () => {
         },
       };
 
-      service.query(config).subscribe();
+      const promise = firstValueFrom(service.query(config));
 
       const req = httpMock.expectOne(request => {
         return (
@@ -133,6 +133,8 @@ describe('ArticlesService', () => {
       });
 
       req.flush({ articles: mockArticleList, articlesCount: 100 });
+      const response = await promise;
+      expect(response.articlesCount).toBe(100);
     });
 
     it('should handle empty results', () => {
@@ -177,8 +179,8 @@ describe('ArticlesService', () => {
       const req = httpMock.expectOne(`/articles/${slug}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
 
     it('should handle delete error', async () => {
@@ -259,8 +261,8 @@ describe('ArticlesService', () => {
       const req = httpMock.expectOne(`/articles/${slug}/favorite`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
   });
 });

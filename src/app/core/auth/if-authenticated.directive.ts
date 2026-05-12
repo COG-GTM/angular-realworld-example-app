@@ -9,9 +9,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class IfAuthenticatedDirective<T> implements OnInit {
   destroyRef = inject(DestroyRef);
   constructor(
-    private templateRef: TemplateRef<T>,
-    private userService: UserService,
-    private viewContainer: ViewContainerRef,
+    private readonly templateRef: TemplateRef<T>,
+    private readonly userService: UserService,
+    private readonly viewContainer: ViewContainerRef,
   ) {}
 
   condition = signal(false);

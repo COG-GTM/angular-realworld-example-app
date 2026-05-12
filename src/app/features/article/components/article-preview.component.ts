@@ -10,7 +10,7 @@ import { FavoriteButtonComponent } from './favorite-button.component';
   template: `
     <div class="article-preview">
       <app-article-meta [article]="article()">
-        <app-favorite-button [article]="article()" (toggle)="toggleFavorite($event)" class="pull-xs-right">
+        <app-favorite-button [article]="article()" (favoriteToggle)="toggleFavorite($event)" class="pull-xs-right">
           {{ article().favoritesCount }}
         </app-favorite-button>
       </app-article-meta>

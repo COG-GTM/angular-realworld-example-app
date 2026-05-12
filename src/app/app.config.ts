@@ -22,9 +22,8 @@ export interface ConduitDebug {
 }
 
 declare global {
-  interface Window {
-    __conduit_debug__?: ConduitDebug;
-  }
+  // eslint-disable-next-line no-var
+  var __conduit_debug__: ConduitDebug | undefined;
 }
 
 /**
@@ -37,7 +36,7 @@ function setupDebugInterface(jwtService: JwtService, userService: UserService): 
   userService.authState.subscribe(state => (currentAuthState = state));
   userService.currentUser.subscribe(user => (currentUser = user));
 
-  window.__conduit_debug__ = {
+  globalThis.__conduit_debug__ = {
     getToken: () => jwtService.getToken(),
     getAuthState: () => currentAuthState,
     getCurrentUser: () => currentUser,

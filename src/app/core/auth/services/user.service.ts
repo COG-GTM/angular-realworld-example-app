@@ -46,10 +46,10 @@ export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'l
  */
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
 
-  private authStateSubject = new BehaviorSubject<AuthState>('loading');
+  private readonly authStateSubject = new BehaviorSubject<AuthState>('loading');
   public authState = this.authStateSubject.asObservable().pipe(distinctUntilChanged());
 
   public isAuthenticated = this.currentUser.pipe(map(user => !!user));

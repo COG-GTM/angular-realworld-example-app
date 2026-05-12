@@ -48,7 +48,12 @@
               <div class="tag-list">
                 @for (tag of tagList(); track tag) {
                   <span class="tag-default tag-pill">
-                    <i class="ion-close-round" (click)="removeTag(tag)"></i>
+                    <button
+                      type="button"
+                      class="ion-close-round tag-remove-btn"
+                      (click)="removeTag(tag)"
+                      [attr.aria-label]="'Remove tag ' + tag"
+                    ></button>
                     {{ tag }}
                   </span>
                 }

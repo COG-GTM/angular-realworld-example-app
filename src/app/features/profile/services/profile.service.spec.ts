@@ -74,7 +74,9 @@ describe('ProfileService', () => {
 
     it('should handle username with special characters', () => {
       const username = 'user-name_123';
-      service.get(username).subscribe();
+      service.get(username).subscribe(profile => {
+        expect(profile.username).toBe(username);
+      });
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
     });
@@ -82,11 +84,13 @@ describe('ProfileService', () => {
     it('should share replay the result', () => {
       const username = 'testuser';
       const observable = service.get(username);
-      observable.subscribe();
-      observable.subscribe();
+      let callCount = 0;
+      observable.subscribe(() => callCount++);
+      observable.subscribe(() => callCount++);
       const requests = httpMock.match(`/profiles/${username}`);
       expect(requests.length).toBe(1);
       requests[0].flush({ profile: mockProfile });
+      expect(callCount).toBe(2);
     });
 
     it('should handle profile with null bio', async () => {
@@ -201,7 +205,9 @@ describe('ProfileService', () => {
 
     it('should send empty body in POST request', () => {
       const username = 'testuser';
-      service.follow(username).subscribe();
+      service.follow(username).subscribe(profile => {
+        expect(profile.following).toBe(true);
+      });
       const req = httpMock.expectOne(`/profiles/${username}/follow`);
       expect(req.request.body).toEqual({});
       req.flush({ profile: { ...mockProfile, following: true } });
@@ -301,40 +307,50 @@ describe('ProfileService', () => {
     it('should handle multiple profile fetches with shareReplay', () => {
       const username = 'testuser';
       const observable = service.get(username);
-      observable.subscribe();
-      observable.subscribe();
-      observable.subscribe();
+      let callCount = 0;
+      observable.subscribe(() => callCount++);
+      observable.subscribe(() => callCount++);
+      observable.subscribe(() => callCount++);
       const requests = httpMock.match(`/profiles/${username}`);
       expect(requests.length).toBe(1);
       requests[0].flush({ profile: mockProfile });
+      expect(callCount).toBe(3);
     });
   });
 
   describe('Edge cases', () => {
     it('should handle username with numbers', () => {
       const username = 'user123';
-      service.get(username).subscribe();
+      service.get(username).subscribe(profile => {
+        expect(profile.username).toBe(username);
+      });
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
     });
 
     it('should handle username with hyphens', () => {
       const username = 'user-name';
-      service.get(username).subscribe();
+      service.get(username).subscribe(profile => {
+        expect(profile.username).toBe(username);
+      });
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
     });
 
     it('should handle username with underscores', () => {
       const username = 'user_name';
-      service.get(username).subscribe();
+      service.get(username).subscribe(profile => {
+        expect(profile.username).toBe(username);
+      });
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
     });
 
     it('should handle very long username', () => {
       const username = 'a'.repeat(50);
-      service.get(username).subscribe();
+      service.get(username).subscribe(profile => {
+        expect(profile.username).toBe(username);
+      });
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
     });

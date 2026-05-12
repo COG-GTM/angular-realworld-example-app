@@ -60,10 +60,10 @@ export class FollowButtonComponent {
             return EMPTY;
           }
 
-          if (!this.profile.following) {
-            return this.profileService.follow(this.profile.username);
-          } else {
+          if (this.profile.following) {
             return this.profileService.unfollow(this.profile.username);
+          } else {
+            return this.profileService.follow(this.profile.username);
           }
         }),
         takeUntilDestroyed(this.destroyRef),

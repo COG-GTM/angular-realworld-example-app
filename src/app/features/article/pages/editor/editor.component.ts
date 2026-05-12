@@ -18,6 +18,16 @@ interface ArticleForm {
   selector: 'app-editor-page',
   templateUrl: './editor.component.html',
   imports: [ListErrorsComponent, ReactiveFormsModule],
+  styles: `
+    .tag-remove-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: inherit;
+      font-size: inherit;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class EditorComponent implements OnInit {
@@ -59,7 +69,7 @@ export default class EditorComponent implements OnInit {
     // retrieve tag control
     const tag = this.tagField.value;
     // only add tag if it does not exist yet
-    if (tag != null && tag.trim() !== '' && this.tagList().indexOf(tag) < 0) {
+    if (tag != null && tag.trim() !== '' && !this.tagList().includes(tag)) {
       this.tagList.update(tags => [...tags, tag]);
     }
     // clear the input

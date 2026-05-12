@@ -124,7 +124,9 @@ describe('ArticlesService', () => {
         },
       };
 
-      service.query(config).subscribe();
+      service.query(config).subscribe(response => {
+        expect(response.articlesCount).toBe(100);
+      });
 
       const req = httpMock.expectOne(request => {
         return (
@@ -177,8 +179,8 @@ describe('ArticlesService', () => {
       const req = httpMock.expectOne(`/articles/${slug}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
 
     it('should handle delete error', async () => {
@@ -259,8 +261,8 @@ describe('ArticlesService', () => {
       const req = httpMock.expectOne(`/articles/${slug}/favorite`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
   });
 });

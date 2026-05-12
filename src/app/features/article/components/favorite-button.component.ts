@@ -58,10 +58,10 @@ export class FavoriteButtonComponent {
             return EMPTY;
           }
 
-          if (!this.article.favorited) {
-            return this.articleService.favorite(this.article.slug);
-          } else {
+          if (this.article.favorited) {
             return this.articleService.unfavorite(this.article.slug);
+          } else {
+            return this.articleService.favorite(this.article.slug);
           }
         }),
         takeUntilDestroyed(this.destroyRef),

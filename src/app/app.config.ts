@@ -27,7 +27,7 @@ declare global {
 }
 
 /**
- * Sets up the debug interface on window.__conduit_debug__
+ * Sets up the debug interface on globalThis.__conduit_debug__
  */
 function setupDebugInterface(jwtService: JwtService, userService: UserService): void {
   let currentAuthState: AuthState = 'loading';

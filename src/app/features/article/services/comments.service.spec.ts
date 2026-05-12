@@ -100,7 +100,9 @@ describe('CommentsService', () => {
 
     it('should handle slug with special characters', () => {
       const slug = 'article-with-special-chars-123';
-      service.getAll(slug).subscribe();
+      service.getAll(slug).subscribe(comments => {
+        expect(comments).toEqual(mockComments);
+      });
       const req = httpMock.expectOne(`/articles/${slug}/comments`);
       req.flush({ comments: mockComments });
     });
@@ -231,7 +233,9 @@ describe('CommentsService', () => {
     it('should send correct request body format', () => {
       const slug = 'test-article';
       const commentBody = 'Test';
-      service.add(slug, commentBody).subscribe();
+      service.add(slug, commentBody).subscribe(comment => {
+        expect(comment).toBeDefined();
+      });
       const req = httpMock.expectOne(`/articles/${slug}/comments`);
       expect(req.request.body).toEqual({
         comment: {
@@ -270,8 +274,8 @@ describe('CommentsService', () => {
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
 
     it('should handle comment not found', async () => {
@@ -307,7 +311,9 @@ describe('CommentsService', () => {
     it('should handle numeric comment ID', () => {
       const slug = 'test-article';
       const commentId = '456';
-      service.delete(commentId, slug).subscribe();
+      service.delete(commentId, slug).subscribe(result => {
+        expect(result).toBeNull();
+      });
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       req.flush(null);
     });
@@ -315,7 +321,9 @@ describe('CommentsService', () => {
     it('should handle UUID comment ID', () => {
       const slug = 'test-article';
       const commentId = '550e8400-e29b-41d4-a716-446655440000';
-      service.delete(commentId, slug).subscribe();
+      service.delete(commentId, slug).subscribe(result => {
+        expect(result).toBeNull();
+      });
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       req.flush(null);
     });
@@ -333,8 +341,8 @@ describe('CommentsService', () => {
       const deletePromise = firstValueFrom(service.delete(comment.id, slug));
       const deleteReq = httpMock.expectOne(`/articles/${slug}/comments/${comment.id}`);
       deleteReq.flush(null);
-      await deletePromise;
-      expect(true).toBe(true);
+      const deleteResult = await deletePromise;
+      expect(deleteResult).toBeNull();
     });
 
     it('should handle getAll then add sequence', async () => {

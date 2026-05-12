@@ -39,7 +39,7 @@ export class FavoriteButtonComponent {
   isSubmitting = signal(false);
 
   @Input() article!: Article;
-  @Output('toggle') favoriteToggle = new EventEmitter<boolean>();
+  @Output() toggle = new EventEmitter<boolean>();
 
   constructor(
     private readonly articleService: ArticlesService,
@@ -69,7 +69,7 @@ export class FavoriteButtonComponent {
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
-          this.favoriteToggle.emit(!this.article.favorited);
+          this.toggle.emit(!this.article.favorited);
         },
         error: () => {
           this.isSubmitting.set(false);

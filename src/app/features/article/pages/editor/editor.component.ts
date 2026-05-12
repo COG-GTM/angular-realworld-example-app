@@ -18,6 +18,16 @@ interface ArticleForm {
   selector: 'app-editor-page',
   templateUrl: './editor.component.html',
   imports: [ListErrorsComponent, ReactiveFormsModule],
+  styles: `
+    .tag-remove-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: inherit;
+      font-size: inherit;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class EditorComponent implements OnInit {

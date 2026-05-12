@@ -39,7 +39,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class FollowButtonComponent {
   @Input() profile!: Profile;
-  @Output('toggle') followToggle = new EventEmitter<Profile>();
+  @Output() toggle = new EventEmitter<Profile>();
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
 
@@ -71,7 +71,7 @@ export class FollowButtonComponent {
       .subscribe({
         next: profile => {
           this.isSubmitting.set(false);
-          this.followToggle.emit(profile);
+          this.toggle.emit(profile);
         },
         error: () => {
           this.isSubmitting.set(false);

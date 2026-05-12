@@ -30,9 +30,9 @@
             </span>
           } @else {
             <span>
-              <app-follow-button [profile]="a.author" (toggle)="toggleFollowing($event)"> </app-follow-button>
+              <app-follow-button [profile]="a.author" (followToggle)="toggleFollowing($event)"> </app-follow-button>
 
-              <app-favorite-button [article]="a" (toggle)="onToggleFavorite($event)">
+              <app-favorite-button [article]="a" (favoriteToggle)="onToggleFavorite($event)">
                 {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
                 <span class="counter">({{ a.favoritesCount }})</span>
               </app-favorite-button>
@@ -77,9 +77,9 @@
             </span>
           } @else {
             <span>
-              <app-follow-button [profile]="a.author" (toggle)="toggleFollowing($event)" />
+              <app-follow-button [profile]="a.author" (followToggle)="toggleFollowing($event)" />
 
-              <app-favorite-button [article]="a" (toggle)="onToggleFavorite($event)">
+              <app-favorite-button [article]="a" (favoriteToggle)="onToggleFavorite($event)">
                 {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
                 <span class="counter">({{ a.favoritesCount }})</span>
               </app-favorite-button>
@@ -103,7 +103,7 @@
                   ></textarea>
                 </div>
                 <div class="card-footer">
-                  <img [src]="currentUser()?.image | defaultImage" class="comment-author-img" />
+                  <img [src]="currentUser()?.image | defaultImage" class="comment-author-img" alt="Comment author" />
                   <button class="btn btn-sm btn-primary" type="submit">Post Comment</button>
                 </div>
               </fieldset>

@@ -2,7 +2,7 @@ import 'zone.js';
 import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
-import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { CommentsService } from './comments.service';
@@ -10,7 +10,7 @@ import { Comment } from '../models/comment.model';
 
 describe('CommentsService', () => {
   beforeAll(() => {
-    getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+    getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
   });
 
   let service: CommentsService;
@@ -98,11 +98,13 @@ describe('CommentsService', () => {
       await expect(promise).rejects.toMatchObject({ status: 404 });
     });
 
-    it('should handle slug with special characters', () => {
+    it('should handle slug with special characters', async () => {
       const slug = 'article-with-special-chars-123';
-      service.getAll(slug).subscribe();
+      const promise = firstValueFrom(service.getAll(slug));
       const req = httpMock.expectOne(`/articles/${slug}/comments`);
       req.flush({ comments: mockComments });
+      const comments = await promise;
+      expect(comments.length).toBe(2);
     });
 
     it('should handle comments with null author bio', async () => {
@@ -270,8 +272,8 @@ describe('CommentsService', () => {
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      const result = await promise;
+      expect(result).toBeNull();
     });
 
     it('should handle comment not found', async () => {
@@ -304,20 +306,24 @@ describe('CommentsService', () => {
       await expect(promise).rejects.toMatchObject({ status: 401 });
     });
 
-    it('should handle numeric comment ID', () => {
+    it('should handle numeric comment ID', async () => {
       const slug = 'test-article';
       const commentId = '456';
-      service.delete(commentId, slug).subscribe();
+      const promise = firstValueFrom(service.delete(commentId, slug));
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       req.flush(null);
+      const result = await promise;
+      expect(result).toBeNull();
     });
 
-    it('should handle UUID comment ID', () => {
+    it('should handle UUID comment ID', async () => {
       const slug = 'test-article';
       const commentId = '550e8400-e29b-41d4-a716-446655440000';
-      service.delete(commentId, slug).subscribe();
+      const promise = firstValueFrom(service.delete(commentId, slug));
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
       req.flush(null);
+      const result = await promise;
+      expect(result).toBeNull();
     });
   });
 
@@ -333,8 +339,8 @@ describe('CommentsService', () => {
       const deletePromise = firstValueFrom(service.delete(comment.id, slug));
       const deleteReq = httpMock.expectOne(`/articles/${slug}/comments/${comment.id}`);
       deleteReq.flush(null);
-      await deletePromise;
-      expect(true).toBe(true);
+      const deleteResult = await deletePromise;
+      expect(deleteResult).toBeNull();
     });
 
     it('should handle getAll then add sequence', async () => {

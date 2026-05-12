@@ -20,7 +20,7 @@ export default class ProfileFavoritesComponent implements OnInit {
   destroyRef = inject(DestroyRef);
 
   constructor(
-    private route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
     private readonly profileService: ProfileService,
   ) {}
 

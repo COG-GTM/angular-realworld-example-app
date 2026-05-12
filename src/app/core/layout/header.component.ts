@@ -11,7 +11,7 @@ import { DefaultImagePipe } from '../../shared/pipes/default-image.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-  private userService = inject(UserService);
+  private readonly userService = inject(UserService);
   currentUser$ = this.userService.currentUser;
   authState$ = this.userService.authState;
 }

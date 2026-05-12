@@ -44,7 +44,7 @@
           @if (currentUser$ | async; as currentUser) {
             <li class="nav-item">
               <a class="nav-link" [routerLink]="['/profile', currentUser.username]" routerLinkActive="active">
-                <img [src]="currentUser.image | defaultImage" class="user-pic" />
+                <img [src]="currentUser.image | defaultImage" class="user-pic" [alt]="currentUser.username" />
                 {{ currentUser.username }}
               </a>
             </li>

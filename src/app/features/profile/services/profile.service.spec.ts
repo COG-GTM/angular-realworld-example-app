@@ -2,7 +2,7 @@ import 'zone.js';
 import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
-import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-browser/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { ProfileService } from './profile.service';
@@ -10,7 +10,7 @@ import { Profile } from '../models/profile.model';
 
 describe('ProfileService', () => {
   beforeAll(() => {
-    getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+    getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
   });
 
   let service: ProfileService;
@@ -72,11 +72,13 @@ describe('ProfileService', () => {
       await expect(promise).rejects.toMatchObject({ status: 404 });
     });
 
-    it('should handle username with special characters', () => {
+    it('should handle username with special characters', async () => {
       const username = 'user-name_123';
-      service.get(username).subscribe();
+      const promise = firstValueFrom(service.get(username));
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
+      const profile = await promise;
+      expect(profile.username).toBe(username);
     });
 
     it('should share replay the result', () => {
@@ -311,32 +313,40 @@ describe('ProfileService', () => {
   });
 
   describe('Edge cases', () => {
-    it('should handle username with numbers', () => {
+    it('should handle username with numbers', async () => {
       const username = 'user123';
-      service.get(username).subscribe();
+      const promise = firstValueFrom(service.get(username));
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
+      const profile = await promise;
+      expect(profile.username).toBe(username);
     });
 
-    it('should handle username with hyphens', () => {
+    it('should handle username with hyphens', async () => {
       const username = 'user-name';
-      service.get(username).subscribe();
+      const promise = firstValueFrom(service.get(username));
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
+      const profile = await promise;
+      expect(profile.username).toBe(username);
     });
 
-    it('should handle username with underscores', () => {
+    it('should handle username with underscores', async () => {
       const username = 'user_name';
-      service.get(username).subscribe();
+      const promise = firstValueFrom(service.get(username));
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
+      const profile = await promise;
+      expect(profile.username).toBe(username);
     });
 
-    it('should handle very long username', () => {
+    it('should handle very long username', async () => {
       const username = 'a'.repeat(50);
-      service.get(username).subscribe();
+      const promise = firstValueFrom(service.get(username));
       const req = httpMock.expectOne(`/profiles/${username}`);
       req.flush({ profile: { ...mockProfile, username } });
+      const profile = await promise;
+      expect(profile.username).toBe(username);
     });
 
     it('should handle profile with very long bio', async () => {

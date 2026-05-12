@@ -39,7 +39,7 @@ export class FavoriteButtonComponent {
   isSubmitting = signal(false);
 
   @Input() article!: Article;
-  @Output() toggle = new EventEmitter<boolean>();
+  @Output('toggle') favoriteToggle = new EventEmitter<boolean>();
 
   constructor(
     private readonly articleService: ArticlesService,
@@ -58,10 +58,10 @@ export class FavoriteButtonComponent {
             return EMPTY;
           }
 
-          if (!this.article.favorited) {
-            return this.articleService.favorite(this.article.slug);
-          } else {
+          if (this.article.favorited) {
             return this.articleService.unfavorite(this.article.slug);
+          } else {
+            return this.articleService.favorite(this.article.slug);
           }
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -69,7 +69,7 @@ export class FavoriteButtonComponent {
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
-          this.toggle.emit(!this.article.favorited);
+          this.favoriteToggle.emit(!this.article.favorited);
         },
         error: () => {
           this.isSubmitting.set(false);

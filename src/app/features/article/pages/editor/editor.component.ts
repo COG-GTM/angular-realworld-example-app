@@ -59,7 +59,7 @@ export default class EditorComponent implements OnInit {
     // retrieve tag control
     const tag = this.tagField.value;
     // only add tag if it does not exist yet
-    if (tag != null && tag.trim() !== '' && this.tagList().indexOf(tag) < 0) {
+    if (tag != null && tag.trim() !== '' && !this.tagList().includes(tag)) {
       this.tagList.update(tags => [...tags, tag]);
     }
     // clear the input

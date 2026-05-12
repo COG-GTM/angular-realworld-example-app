@@ -103,7 +103,11 @@
                   ></textarea>
                 </div>
                 <div class="card-footer">
-                  <img [src]="currentUser()?.image | defaultImage" class="comment-author-img" />
+                  <img
+                    [src]="currentUser()?.image | defaultImage"
+                    class="comment-author-img"
+                    [alt]="currentUser()?.username ?? 'User avatar'"
+                  />
                   <button class="btn btn-sm btn-primary" type="submit">Post Comment</button>
                 </div>
               </fieldset>

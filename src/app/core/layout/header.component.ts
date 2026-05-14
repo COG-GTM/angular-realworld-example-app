@@ -24,12 +24,6 @@ import { ThemeService } from '../services/theme.service';
       .theme-toggle:hover {
         color: rgba(0, 0, 0, 0.6);
       }
-      :host-context(html.dark) .theme-toggle {
-        color: rgba(255, 255, 255, 0.45);
-      }
-      :host-context(html.dark) .theme-toggle:hover {
-        color: rgba(255, 255, 255, 0.7);
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

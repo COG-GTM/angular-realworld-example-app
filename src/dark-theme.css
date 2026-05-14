@@ -212,6 +212,14 @@ html.dark .btn-outline-secondary:disabled:hover {
   border-color: #333;
 }
 
+/* Theme toggle button dark-mode colors (global to avoid :host-context) */
+html.dark .theme-toggle {
+  color: rgba(255, 255, 255, 0.45);
+}
+html.dark .theme-toggle:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 /* Transition for smooth theme switching (both directions) */
 body,
 .card,

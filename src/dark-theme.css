@@ -212,14 +212,14 @@ html.dark .btn-outline-secondary:disabled:hover {
   border-color: #333;
 }
 
-/* Transition for smooth theme switching */
-html.dark body,
-html.dark .card,
-html.dark .card-footer,
-html.dark footer,
-html.dark .banner,
-html.dark .form-control,
-html.dark .profile-page .user-info {
+/* Transition for smooth theme switching (both directions) */
+body,
+.card,
+.card-footer,
+footer,
+.banner,
+.form-control,
+.profile-page .user-info {
   transition:
     background-color 0.2s ease,
     color 0.2s ease,

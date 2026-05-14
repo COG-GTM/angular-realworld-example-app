@@ -6,6 +6,7 @@ import { UserService } from '../../core/auth/services/user.service';
 import { ListErrorsComponent } from '../../shared/components/list-errors.component';
 import { Errors } from '../../core/models/errors.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ThemeService } from '../../core/services/theme.service';
 
 interface SettingsForm {
   image: FormControl<string>;
@@ -36,6 +37,7 @@ export default class SettingsComponent implements OnInit {
   errors = signal<Errors | null>(null);
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
+  themeService = inject(ThemeService);
 
   constructor(
     private readonly router: Router,

@@ -1,0 +1,227 @@
+/*
+ * ============================================================================
+ * Dark Theme Overrides
+ * Activated via html.dark class (managed by ThemeService)
+ * ============================================================================
+ */
+
+html.dark {
+  --brand: #44bb55;
+  --brand-hover: #3aa84a;
+  --brand-active: #329640;
+  --brand-dark: #7dd88b;
+  --brand-light: #237630;
+
+  --danger: #e57373;
+  --danger-light: #8b4444;
+
+  --secondary: #555;
+  --secondary-hover: #666;
+  --secondary-border: #777;
+
+  --text: #e0e0e0;
+  --text-muted: #888;
+  --text-light: #777;
+  --text-lighter: #666;
+  --text-disabled: #555;
+
+  --border: #333;
+  --bg-light: #1a1a1a;
+  --input-focus: var(--brand);
+}
+
+html.dark body {
+  background-color: #121212;
+  color: var(--text);
+}
+
+/* Navbar */
+html.dark .navbar-light .navbar-brand,
+html.dark .navbar-light .navbar-brand:focus,
+html.dark .navbar-light .navbar-brand:hover {
+  color: #e0e0e0;
+}
+
+html.dark .navbar-brand {
+  color: #e0e0e0;
+}
+
+html.dark .navbar-light .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+html.dark .navbar-light .navbar-nav .nav-link:focus,
+html.dark .navbar-light .navbar-nav .nav-link:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+html.dark .navbar-light .navbar-nav .active > .nav-link,
+html.dark .navbar-light .navbar-nav .active > .nav-link:focus,
+html.dark .navbar-light .navbar-nav .active > .nav-link:hover,
+html.dark .navbar-light .navbar-nav .nav-link.active,
+html.dark .navbar-light .navbar-nav .nav-link.active:focus,
+html.dark .navbar-light .navbar-nav .nav-link.active:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Forms */
+html.dark .form-control {
+  color: #e0e0e0;
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+html.dark .form-control:disabled,
+html.dark .form-control[readonly] {
+  background-color: #2a2a2a;
+}
+
+/* Cards */
+html.dark .card {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+html.dark .card-footer {
+  background-color: #1a1a1a;
+  border-top-color: #333;
+}
+
+/* Tags */
+html.dark .tag-default {
+  color: #ccc;
+  border-color: #444;
+}
+
+html.dark .tag-default:hover,
+html.dark .tag-default[href]:focus,
+html.dark .tag-default[href]:hover {
+  background-color: #2a2a2a;
+}
+
+/* Footer */
+html.dark footer {
+  background: #1a1a1a;
+  border-top-color: #333;
+}
+
+html.dark footer .logo-font,
+html.dark footer a {
+  color: #e0e0e0;
+}
+
+/* Banner */
+html.dark .banner {
+  background: #1a1a1a;
+  border-top-color: #333;
+  border-bottom-color: #333;
+}
+
+/* Article page */
+html.dark .article-page .banner h1 {
+  color: #e0e0e0;
+}
+
+html.dark .article-page .card .mod-options {
+  color: #ccc;
+}
+
+/* Article preview */
+html.dark .article-preview {
+  border-top-color: #333;
+}
+
+/* Pagination */
+html.dark .page-item.active .page-link,
+html.dark .page-item.active .page-link:focus,
+html.dark .page-item.active .page-link:hover {
+  color: #e0e0e0;
+  background-color: #333;
+  border-color: #333;
+}
+
+html.dark .page-item.disabled .page-link,
+html.dark .page-item.disabled .page-link:focus,
+html.dark .page-item.disabled .page-link:hover {
+  background-color: #1e1e1e;
+}
+
+html.dark .page-link {
+  background-color: #1e1e1e;
+}
+
+html.dark .page-link:focus,
+html.dark .page-link:hover {
+  background-color: #2a2a2a;
+}
+
+/* Outline active tabs */
+html.dark .nav-pills.outline-active .nav-link:hover {
+  color: #ccc;
+}
+
+html.dark .nav-pills.outline-active .nav-link.active {
+  background: #121212;
+}
+
+/* Profile page */
+html.dark .profile-page .user-info {
+  background: #1a1a1a;
+  border-top-color: #333;
+  border-bottom-color: #333;
+}
+
+/* Home sidebar */
+html.dark .home-page .sidebar {
+  border-left-color: #333;
+}
+
+/* HR */
+html.dark hr {
+  border-top-color: #333;
+}
+
+/* SVG logo inversion */
+html.dark .navbar-logo,
+html.dark .footer-logo,
+html.dark .banner-logo {
+  filter: invert(1);
+}
+
+/* Comment form */
+html.dark .article-page .comment-form .card-block textarea {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+html.dark .article-page .card {
+  border-color: #333;
+}
+
+html.dark .article-page .card .card-footer {
+  border-top-color: #333;
+}
+
+/* Outline button border colors for dark theme */
+html.dark .btn-outline-secondary.disabled:focus,
+html.dark .btn-outline-secondary.disabled.focus,
+html.dark .btn-outline-secondary:disabled:focus,
+html.dark .btn-outline-secondary:disabled.focus,
+html.dark .btn-outline-secondary.disabled:hover,
+html.dark .btn-outline-secondary:disabled:hover {
+  border-color: #333;
+}
+
+/* Transition for smooth theme switching */
+html.dark body,
+html.dark .card,
+html.dark .card-footer,
+html.dark footer,
+html.dark .banner,
+html.dark .form-control,
+html.dark .profile-page .user-info {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}

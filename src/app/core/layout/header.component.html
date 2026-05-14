@@ -17,6 +17,16 @@
           <li class="nav-item">
             <a class="nav-link nav-signup" routerLink="/register" routerLinkActive="active"> Sign up </a>
           </li>
+
+          <li class="nav-item">
+            <button
+              class="theme-toggle"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <i [class]="themeService.theme() === 'dark' ? 'ion-ios-sunny' : 'ion-ios-moon'"></i>
+            </button>
+          </li>
         </ul>
       }
 
@@ -49,6 +59,16 @@
               </a>
             </li>
           }
+
+          <li class="nav-item">
+            <button
+              class="theme-toggle"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <i [class]="themeService.theme() === 'dark' ? 'ion-ios-sunny' : 'ion-ios-moon'"></i>
+            </button>
+          </li>
         </ul>
       }
 
@@ -78,6 +98,16 @@
               <i class="ion-load-c"></i>&nbsp;Connecting...
             </span>
           </li>
+
+          <li class="nav-item">
+            <button
+              class="theme-toggle"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <i [class]="themeService.theme() === 'dark' ? 'ion-ios-sunny' : 'ion-ios-moon'"></i>
+            </button>
+          </li>
         </ul>
       }
 
@@ -89,6 +119,16 @@
           </li>
           <li class="nav-item">
             <span class="nav-link">Loading...</span>
+          </li>
+
+          <li class="nav-item">
+            <button
+              class="theme-toggle"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <i [class]="themeService.theme() === 'dark' ? 'ion-ios-sunny' : 'ion-ios-moon'"></i>
+            </button>
           </li>
         </ul>
       }

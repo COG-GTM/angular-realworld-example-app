@@ -63,6 +63,21 @@
           </fieldset>
         </form>
 
+        <!-- Dark mode setting -->
+        <hr />
+
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <span style="font-size: 1rem; font-weight: 500">Dark Mode</span>
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="themeService.theme() === 'dark'"
+            [class.btn-outline-secondary]="themeService.theme() !== 'dark'"
+            (click)="themeService.toggle()"
+          >
+            {{ themeService.theme() === 'dark' ? 'On' : 'Off' }}
+          </button>
+        </div>
+
         <!-- Line break for logout button -->
         <hr />
 

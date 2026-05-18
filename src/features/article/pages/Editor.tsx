@@ -46,13 +46,17 @@ export function Editor() {
 
   const submitForm = async () => {
     setIsSubmitting(true);
-    addTag();
+
+    const trimmedTag = tagField.trim();
+    const finalTagList = trimmedTag && !tagList.includes(trimmedTag) ? [...tagList, trimmedTag] : tagList;
+    setTagList(finalTagList);
+    setTagField('');
 
     const articleData = {
       title,
       description,
       body,
-      tagList,
+      tagList: finalTagList,
     };
 
     try {

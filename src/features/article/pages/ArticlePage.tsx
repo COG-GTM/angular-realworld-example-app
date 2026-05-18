@@ -41,7 +41,7 @@ export function ArticlePage() {
         setComments(c);
       })
       .catch(err => {
-        setErrors(err.errors || { errors: { error: 'Failed to load article' } });
+        setErrors(err && err.errors ? (err as Errors) : { errors: { error: ['Failed to load article'] } });
       });
   }, [slug]);
 

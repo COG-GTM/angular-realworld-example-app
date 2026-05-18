@@ -22,7 +22,7 @@ export function App() {
           path="/login"
           element={
             <RequireUnauth>
-              <AuthPage />
+              <AuthPage key="login" />
             </RequireUnauth>
           }
         />
@@ -30,7 +30,7 @@ export function App() {
           path="/register"
           element={
             <RequireUnauth>
-              <AuthPage />
+              <AuthPage key="register" />
             </RequireUnauth>
           }
         />

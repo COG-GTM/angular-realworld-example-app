@@ -151,11 +151,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/');
   }, [purgeAuth, navigate]);
 
-  const update = useCallback(async (userData: Partial<User>) => {
-    const data = await api.put<{ user: User }>('/user', { user: userData });
-    setUser(data.user);
-    return data;
-  }, []);
+  const update = useCallback(
+    async (userData: Partial<User>) => {
+      const data = await api.put<{ user: User }>('/user', { user: userData });
+      setAuth(data.user);
+      return data;
+    },
+    [setAuth],
+  );
 
   return (
     <AuthContext.Provider

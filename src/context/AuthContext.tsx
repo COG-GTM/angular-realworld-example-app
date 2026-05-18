@@ -147,8 +147,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    purgeAuth();
     navigate('/');
+    setTimeout(() => purgeAuth(), 0);
   }, [purgeAuth, navigate]);
 
   const update = useCallback(

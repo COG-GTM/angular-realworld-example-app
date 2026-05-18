@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   authState: AuthState;
   isAuthenticated: boolean;
+  isLoggingOut: boolean;
   login: (credentials: { email: string; password: string }) => Promise<{ user: User }>;
   register: (credentials: { username: string; email: string; password: string }) => Promise<{ user: User }>;
   logout: () => void;
@@ -43,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const retryAttempt = useRef(0);
   const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const cancelRetry = useCallback(() => {
     if (retryTimer.current) {
@@ -147,8 +149,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
+    setIsLoggingOut(true);
+    purgeAuth();
     navigate('/');
-    setTimeout(() => purgeAuth(), 0);
+    requestAnimationFrame(() => setIsLoggingOut(false));
   }, [purgeAuth, navigate]);
 
   const update = useCallback(
@@ -166,6 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         authState,
         isAuthenticated: !!user,
+        isLoggingOut,
         login,
         register,
         logout,

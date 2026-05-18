@@ -43,12 +43,18 @@ export function ArticleList({
       },
     };
 
-    articlesService.query(query).then(data => {
-      if (cancelled) return;
-      setLoading('LOADED');
-      setResults(data.articles);
-      setTotalPages(Array.from(new Array(Math.ceil(data.articlesCount / limit)), (_, index) => index + 1));
-    });
+    articlesService
+      .query(query)
+      .then(data => {
+        if (cancelled) return;
+        setLoading('LOADED');
+        setResults(data.articles);
+        setTotalPages(Array.from(new Array(Math.ceil(data.articlesCount / limit)), (_, index) => index + 1));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoading('LOADED');
+      });
 
     return () => {
       cancelled = true;

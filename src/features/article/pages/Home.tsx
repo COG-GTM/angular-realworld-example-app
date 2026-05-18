@@ -32,7 +32,7 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    if (feed === 'following' && !isAuthenticated) {
+    if (feed === 'following' && !isAuthenticated && authState !== 'loading') {
       navigate('/login');
       return;
     }
@@ -51,7 +51,7 @@ export function Home() {
 
     setListConfig({ type, filters });
     setIsFollowingFeed(type === 'feed');
-  }, [tag, feed, isAuthenticated, navigate]);
+  }, [tag, feed, isAuthenticated, authState, navigate]);
 
   const onPageChange = (page: number) => {
     const params: Record<string, string> = {};

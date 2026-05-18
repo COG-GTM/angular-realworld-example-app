@@ -22,7 +22,7 @@ export function ProfilePage() {
       .get(username)
       .then(setProfile)
       .catch(err => {
-        setErrors({ errors: err.errors || { error: 'Failed to load profile' } });
+        setErrors({ errors: err.errors || { error: ['Failed to load profile'] } });
       });
   }, [username]);
 

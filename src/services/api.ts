@@ -1,5 +1,11 @@
 const API_ROOT = 'https://api.realworld.show/api';
 
+let onUnauthorized: (() => void) | null = null;
+
+export function setOnUnauthorized(cb: () => void): void {
+  onUnauthorized = cb;
+}
+
 function getToken(): string | null {
   return window.localStorage.getItem('jwtToken');
 }
@@ -35,6 +41,9 @@ async function request<T>(method: string, url: string, body?: unknown): Promise<
               network: ['Unable to connect. Please check your internet connection.'],
             },
           };
+    if (res.status === 401 && !url.endsWith('/user')) {
+      onUnauthorized?.();
+    }
     throw { ...normalized, status: res.status };
   }
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../services/api';
+import { api, setOnUnauthorized } from '../services/api';
 import type { User } from '../models/user.model';
 
 export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'loading';
@@ -95,6 +95,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }, delay * 1000);
   }, [cancelRetry, setAuth, purgeAuth]);
+
+  useEffect(() => {
+    setOnUnauthorized(purgeAuth);
+  }, [purgeAuth]);
 
   useEffect(() => {
     window.__conduit_debug__ = {

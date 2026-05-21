@@ -3,11 +3,12 @@ import { UserService } from '../auth/services/user.service';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { DefaultImagePipe } from '../../shared/pipes/default-image.pipe';
+import { ThemeToggleComponent } from '../theme/theme-toggle.component';
 
 @Component({
   selector: 'app-layout-header',
   templateUrl: './header.component.html',
-  imports: [RouterLinkActive, RouterLink, AsyncPipe, DefaultImagePipe],
+  imports: [RouterLinkActive, RouterLink, AsyncPipe, DefaultImagePipe, ThemeToggleComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {

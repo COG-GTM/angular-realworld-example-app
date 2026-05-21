@@ -2,6 +2,8 @@
   <div class="container">
     <a class="navbar-brand" routerLink="/"><img src="assets/conduit-logo.svg" alt="Conduit" class="navbar-logo" /></a>
 
+    <app-theme-toggle />
+
     @if (authState$ | async; as authState) {
       <!-- Show this for logged out users -->
       @if (authState === 'unauthenticated') {

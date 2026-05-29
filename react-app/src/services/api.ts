@@ -20,11 +20,17 @@ async function request<T>(url: string, options: RequestInit = {}, signal?: Abort
     ...((options.headers as Record<string, string>) || {}),
   };
 
-  const res = await fetch(`${API_ROOT}${url}`, {
-    ...options,
-    headers,
-    signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_ROOT}${url}`, {
+      ...options,
+      headers,
+      signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') throw err;
+    throw { errors: { network: ['Unable to connect to the server. Please check your internet connection.'] } };
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ errors: { error: [res.statusText] } }));

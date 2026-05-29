@@ -8,7 +8,7 @@ import type { ArticleListConfig } from '../../types';
 export default function Home() {
   const { tag } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, authState } = useAuth();
   const navigate = useNavigate();
 
   const feed = searchParams.get('feed');
@@ -20,10 +20,10 @@ export default function Home() {
 
   // Redirect if feed=following but not authenticated
   useEffect(() => {
-    if (feed === 'following' && !user) {
+    if (feed === 'following' && authState === 'unauthenticated') {
       navigate('/login');
     }
-  }, [feed, user, navigate]);
+  }, [feed, authState, navigate]);
 
   const listConfig: ArticleListConfig = useMemo(() => {
     if (tag) {

@@ -1,31 +1,47 @@
-# ![Angular Example App](logo.png)
+# ![Conduit](logo.png)
 
-> ### Angular codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
+> ### React + TypeScript + Vite codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
 
 ### [RealWorld](https://realworld.show)
 
-This codebase was created to demonstrate a fully fledged application built with Angular that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more. We've gone to great lengths to adhere to the [Angular Styleguide](https://angular.dev/style-guide) & best practices.
+This codebase was created to demonstrate a fully fledged application built with **React 19 + TypeScript + Vite** that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more.
+
+Migrated from the [Angular RealWorld Example App](https://github.com/realworld-apps/angular-realworld-example-app).
 
 # How it works
 
-A global documentation for the project is available at [docs.realworld.show](https://docs.realworld.show/introduction/).
+The React app lives in `react-app/` and uses:
+
+- **React 19** with functional components and hooks
+- **TypeScript** for type safety
+- **Vite** for fast development and builds
+- **React Router v6** for client-side routing
+- **React Context** for auth state management
+- **fetch API** with `AbortController` for data fetching
+- **marked** + **DOMPurify** for markdown rendering
+- **Vitest** + **React Testing Library** for testing
 
 # Getting started
 
-Requires [Bun](https://bun.sh/docs/installation).
-
 ```bash
-git clone https://github.com/realworld-apps/angular-realworld-example-app.git
-cd angular-realworld-example-app
-bun run setup  # Init submodules + install dependencies
-bun run start
+cd react-app
+npm install
+npm run dev
 ```
-
-Run `bun run setup` again after a `git pull` that updates the `realworld` submodule.
 
 ### Building the project
 
-Run `bun run build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+cd react-app
+npm run build
+```
+
+### Running tests
+
+```bash
+cd react-app
+npm test
+```
 
 ## Functionality overview
 
@@ -61,13 +77,21 @@ The example application is a social blogging site (i.e. a Medium.com clone) call
   - Show basic user info
   - List of articles populated from author's created articles or author's favorited articles
 
-## Realworld Angular
+## Project Structure
 
-This project may be too simple for getting a good understanding of the different ways an Angular project can be built.
-For a comprehensive understanding of how more complex Angular projects can be implemented, you may check the [
-RealWorld Angular](https://github.com/realworld-angular) organization that is specialized in Angular development, currently managed by [Gerome Grignon](https://github.com/geromegrignon).
+```
+react-app/src/
+├── types/          # TypeScript interfaces
+├── services/       # API services (fetch-based)
+├── context/        # React Context (AuthContext)
+├── components/     # Reusable UI components
+├── pages/          # Route-level page components
+├── utils/          # Utility functions
+├── styles/         # Global CSS
+├── App.tsx         # Router and layout
+└── main.tsx        # Entry point
+```
 
 ## License
 
 - **Project code**: [MIT License](LICENSE)
-- **Angular logo**: The Angular logo is a trademark of Google LLC, used to indicate this project is built with Angular.

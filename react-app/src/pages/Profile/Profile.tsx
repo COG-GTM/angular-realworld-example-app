@@ -21,6 +21,8 @@ export default function Profile() {
 
   useEffect(() => {
     if (!username) return;
+    setProfile(null);
+    setErrors(null);
     const controller = new AbortController();
 
     getProfile(username, controller.signal)

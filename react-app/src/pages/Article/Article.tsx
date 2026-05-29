@@ -78,8 +78,13 @@ export default function Article() {
   const handleDeleteArticle = async () => {
     if (!article) return;
     setIsDeleting(true);
-    await deleteArticle(article.slug);
-    navigate('/');
+    try {
+      await deleteArticle(article.slug);
+      navigate('/');
+    } catch (err) {
+      setErrors(err as Errors);
+      setIsDeleting(false);
+    }
   };
 
   const handleAddComment = async (e: FormEvent) => {

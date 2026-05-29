@@ -2,6 +2,16 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import type { User, AuthState } from '../types';
 import { getCurrentUser, logout as logoutService } from '../services/user.service';
 
+declare global {
+  interface Window {
+    __conduit_debug__?: {
+      getToken: () => string | null;
+      getAuthState: () => AuthState;
+      getCurrentUser: () => User | null;
+    };
+  }
+}
+
 interface AuthContextType {
   user: User | null;
   authState: AuthState;
@@ -34,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState('authenticated');
       })
       .catch(() => {
+        window.localStorage.removeItem('jwtToken');
         setAuthState('unauthenticated');
       });
 
@@ -50,6 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setAuthState('unauthenticated');
   }, []);
+
+  useEffect(() => {
+    window.__conduit_debug__ = {
+      getToken: () => window.localStorage.getItem('jwtToken'),
+      getAuthState: () => authState,
+      getCurrentUser: () => user,
+    };
+  }, [user, authState]);
 
   return (
     <AuthContext.Provider value={{ user, authState, setUser: handleSetUser, logout }}>

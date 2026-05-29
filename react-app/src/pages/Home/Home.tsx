@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getTags } from '../../services/tags.service';
@@ -25,21 +25,15 @@ export default function Home() {
     }
   }, [feed, user, navigate]);
 
-  // Compute list config
-  let type: string;
-  let filters: { tag?: string } = {};
-
-  if (tag) {
-    type = 'all';
-    filters = { tag };
-  } else if (feed === 'following') {
-    type = 'feed';
-  } else {
-    type = 'all';
-  }
-
-  const listConfig: ArticleListConfig = { type, filters };
-  const isFollowingFeed = type === 'feed';
+  const listConfig: ArticleListConfig = useMemo(() => {
+    if (tag) {
+      return { type: 'all', filters: { tag } };
+    } else if (feed === 'following') {
+      return { type: 'feed', filters: {} };
+    }
+    return { type: 'all', filters: {} };
+  }, [tag, feed]);
+  const isFollowingFeed = listConfig.type === 'feed';
 
   // Load tags
   useEffect(() => {

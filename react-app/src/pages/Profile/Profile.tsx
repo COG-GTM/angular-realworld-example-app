@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getProfile } from '../../services/profile.service';
@@ -34,12 +34,13 @@ export default function Profile() {
     return () => controller.abort();
   }, [username]);
 
-  const articlesConfig: ArticleListConfig | null = profile
-    ? {
-        type: 'all',
-        filters: isFavorites ? { favorited: profile.username } : { author: profile.username },
-      }
-    : null;
+  const articlesConfig: ArticleListConfig | null = useMemo(() => {
+    if (!profile) return null;
+    return {
+      type: 'all',
+      filters: isFavorites ? { favorited: profile.username } : { author: profile.username },
+    };
+  }, [profile?.username, isFavorites]);
 
   return (
     <div className="profile-page">

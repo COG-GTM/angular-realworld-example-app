@@ -58,9 +58,13 @@ export default function Editor() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    addTag();
 
-    const articleData = { title, description, body, tagList };
+    const pendingTag = tagInput.trim();
+    const finalTagList = pendingTag && !tagList.includes(pendingTag) ? [...tagList, pendingTag] : tagList;
+    setTagList(finalTagList);
+    setTagInput('');
+
+    const articleData = { title, description, body, tagList: finalTagList };
 
     try {
       const article = slug

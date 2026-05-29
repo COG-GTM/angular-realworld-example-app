@@ -2,5 +2,7 @@ import type { Errors } from '../types';
 
 export function formatErrors(errors: Errors | null): string[] {
   if (!errors?.errors) return [];
-  return Object.keys(errors.errors).map(key => `${key} ${errors.errors[key]}`);
+  return Object.entries(errors.errors).flatMap(([key, value]) =>
+    (Array.isArray(value) ? value : [value]).map(msg => `${key} ${msg}`),
+  );
 }

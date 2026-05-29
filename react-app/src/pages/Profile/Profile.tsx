@@ -15,6 +15,7 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [errors, setErrors] = useState<Errors | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const isFavorites = location.pathname.endsWith('/favorites');
   const isUser = user?.username === profile?.username;
@@ -43,6 +44,10 @@ export default function Profile() {
       filters: isFavorites ? { favorited: profile.username } : { author: profile.username },
     };
   }, [profile?.username, isFavorites]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isFavorites, username]);
 
   return (
     <div className="profile-page">
@@ -103,7 +108,7 @@ export default function Profile() {
                 </div>
 
                 {articlesConfig && (
-                  <ArticleList config={articlesConfig} limit={10} />
+                  <ArticleList config={articlesConfig} limit={10} currentPage={currentPage} onPageChange={setCurrentPage} />
                 )}
               </div>
             </div>

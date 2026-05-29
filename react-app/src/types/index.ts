@@ -45,7 +45,7 @@ export interface ArticleListConfig {
 }
 
 export interface Errors {
-  errors: { [key: string]: string };
+  errors: { [key: string]: string | string[] };
 }
 
 export type AuthState = 'authenticated' | 'unauthenticated' | 'loading';

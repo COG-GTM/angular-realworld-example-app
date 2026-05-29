@@ -26,6 +26,8 @@ export function FollowButton({ profile, onToggle }: Props) {
         ? await unfollowUser(profile.username)
         : await followUser(profile.username);
       onToggle(updated);
+    } catch {
+      // API error — button re-enables, user can retry
     } finally {
       setIsSubmitting(false);
     }

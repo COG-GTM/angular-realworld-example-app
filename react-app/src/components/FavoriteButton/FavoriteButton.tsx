@@ -17,7 +17,7 @@ export function FavoriteButton({ article, onToggle, children }: Props) {
 
   const handleClick = async () => {
     if (!user) {
-      navigate('/register');
+      navigate('/login');
       return;
     }
 
@@ -29,6 +29,8 @@ export function FavoriteButton({ article, onToggle, children }: Props) {
         await unfavoriteArticle(article.slug);
       }
       onToggle(!article.favorited);
+    } catch {
+      // API error — button re-enables, user can retry
     } finally {
       setIsSubmitting(false);
     }

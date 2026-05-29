@@ -31,7 +31,7 @@ export default function Settings() {
     setIsSubmitting(true);
 
     try {
-      const updated = await updateUser({ image, username, bio, email, password });
+      const updated = await updateUser({ image, username, bio, email, ...(password ? { password } : {}) });
       setUser(updated);
       navigate(`/profile/${updated.username}`);
     } catch (err) {

@@ -31,6 +31,10 @@ export default function Editor() {
       setDescription(article.description);
       setBody(article.body);
       setTagList(article.tagList);
+    }).catch(err => {
+      if (err.name !== 'AbortError') {
+        setErrors(err.errors ? err : { errors: { error: 'Failed to load article' } });
+      }
     });
 
     return () => controller.abort();

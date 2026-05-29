@@ -43,9 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(u);
         setAuthState('authenticated');
       })
-      .catch(() => {
-        window.localStorage.removeItem('jwtToken');
-        setAuthState('unauthenticated');
+      .catch((err) => {
+        if (err?.name !== 'AbortError') {
+          window.localStorage.removeItem('jwtToken');
+          setAuthState('unauthenticated');
+        }
       });
 
     return () => controller.abort();

@@ -325,6 +325,68 @@ describe('UserService', () => {
     });
   });
 
+  describe('auth unavailable / retry', () => {
+    it('should enter the unavailable state on a 5XX error from /user', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('tok');
+        const states: string[] = [];
+        const sub = service.authState.subscribe(s => states.push(s));
+        service.getCurrentUser().subscribe();
+        httpMock.expectOne('/user').flush('Server error', { status: 500, statusText: 'Server Error' });
+        expect(states).toContain('unavailable');
+        sub.unsubscribe();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should schedule a retry that re-requests /user after the backoff delay', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('tok');
+        service.getCurrentUser().subscribe();
+        httpMock.expectOne('/user').flush('err', { status: 503, statusText: 'Service Unavailable' });
+
+        // Backoff is 2s for the first retry.
+        vi.advanceTimersByTime(2000);
+        httpMock.expectOne('/user').flush({ user: mockUser });
+        expect(jwtService.saveToken).toHaveBeenCalledWith(mockUser.token);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should not schedule a retry when there is no token', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue(null);
+        service.getCurrentUser().subscribe();
+        httpMock.expectOne('/user').flush('err', { status: 500, statusText: 'Server Error' });
+        vi.advanceTimersByTime(20000);
+        httpMock.expectNone('/user');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should cancel a pending retry once authentication succeeds', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('tok');
+        service.getCurrentUser().subscribe();
+        httpMock.expectOne('/user').flush('err', { status: 500, statusText: 'Server Error' });
+
+        // setAuth cancels the scheduled retry.
+        service.setAuth(mockUser);
+        vi.advanceTimersByTime(20000);
+        httpMock.expectNone('/user');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
   describe('Integration scenarios', () => {
     it('should handle complete authentication flow', async () => {
       const credentials = { email: 'test@example.com', password: 'password123' };

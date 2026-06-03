@@ -12,7 +12,18 @@ export default defineConfig({
     pool: 'threads',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      all: true,
+      include: ['src/**/*.ts'],
+      exclude: [
+        'src/**/*.spec.ts',
+        'src/test-setup.ts',
+        'src/testing/**',
+        'src/main.ts',
+        'src/**/*.model.ts',
+        'src/**/*.routes.ts',
+        'src/app/app.config.ts',
+      ],
     },
   },
   define: {

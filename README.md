@@ -1,10 +1,12 @@
-# ![Angular Example App](logo.png)
+# ![React Example App](logo.png)
 
-> ### Angular codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
+> ### React + TypeScript codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
 
 ### [RealWorld](https://realworld.show)
 
-This codebase was created to demonstrate a fully fledged application built with Angular that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more. We've gone to great lengths to adhere to the [Angular Styleguide](https://angular.dev/style-guide) & best practices.
+This codebase was created to demonstrate a fully fledged application built with [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org) + [Vite](https://vite.dev) that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more.
+
+> This app was migrated from Angular to React. The build tool is Vite, routing uses [React Router](https://reactrouter.com), state is managed with React Context + hooks, and data fetching uses the native `fetch` API with `AbortController` for cancellation.
 
 # How it works
 
@@ -18,10 +20,21 @@ Requires [Bun](https://bun.sh/docs/installation).
 git clone https://github.com/realworld-apps/angular-realworld-example-app.git
 cd angular-realworld-example-app
 bun run setup  # Init submodules + install dependencies
-bun run start
+bun run start  # Vite dev server at http://localhost:4200
 ```
 
 Run `bun run setup` again after a `git pull` that updates the `realworld` submodule.
+
+### Scripts
+
+| Command                | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `bun run start`        | Start the Vite dev server (`localhost:4200`)    |
+| `bun run build`        | Type-check (`tsc -b`) and build to `dist/`      |
+| `bun run test`         | Run unit tests (Vitest + Testing Library)       |
+| `bun run test:e2e`     | Run the framework-agnostic Playwright e2e suite |
+| `bun run format`       | Format the codebase with Prettier               |
+| `bun run format:check` | Check formatting without writing                |
 
 ### Building the project
 
@@ -61,13 +74,20 @@ The example application is a social blogging site (i.e. a Medium.com clone) call
   - Show basic user info
   - List of articles populated from author's created articles or author's favorited articles
 
-## Realworld Angular
+## Project structure
 
-This project may be too simple for getting a good understanding of the different ways an Angular project can be built.
-For a comprehensive understanding of how more complex Angular projects can be implemented, you may check the [
-RealWorld Angular](https://github.com/realworld-angular) organization that is specialized in Angular development, currently managed by [Gerome Grignon](https://github.com/geromegrignon).
+```
+src/
+├── types/        # TypeScript interfaces (User, Article, Comment, Profile, ...)
+├── services/     # API client + data services (fetch/async-await)
+├── context/      # React Context providers (AuthContext)
+├── components/   # Reusable UI components + route guards
+├── pages/        # Route-level page components
+├── utils/        # Utility functions (formatters, ex-Angular pipes)
+├── App.tsx       # Router + app shell
+└── main.tsx      # Entry point
+```
 
 ## License
 
 - **Project code**: [MIT License](LICENSE)
-- **Angular logo**: The Angular logo is a trademark of Google LLC, used to indicate this project is built with Angular.

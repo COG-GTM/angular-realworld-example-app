@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { jwt } from '../api/client';
+import { ApiError, jwt } from '../api/client';
 import { authApi } from '../api/services';
 import type { User } from '../types';
 
-export type AuthState = 'authenticated' | 'unauthenticated' | 'loading';
+export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'loading';
 
 interface UserContextValue {
   user: User | null;
@@ -29,20 +29,37 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<User | null>(null);
   const [authState, setAuthState] = useState<AuthState>(jwt.getToken() ? 'loading' : 'unauthenticated');
 
+  const [retryAttempt, setRetryAttempt] = useState(0);
+
   useEffect(() => {
     if (!jwt.getToken()) return;
+    let cancelled = false;
     authApi
       .getCurrentUser()
       .then(({ user }) => {
+        if (cancelled) return;
         setUserState(user);
         setAuthState('authenticated');
       })
-      .catch(() => {
-        jwt.destroyToken();
-        setUserState(null);
-        setAuthState('unauthenticated');
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.status >= 400 && err.status < 500) {
+          jwt.destroyToken();
+          setUserState(null);
+          setAuthState('unauthenticated');
+        } else {
+          // Server error or network failure: keep the token and retry with backoff
+          setAuthState('unavailable');
+          const delay = Math.min(1000 * 2 ** retryAttempt, 30000);
+          setTimeout(() => {
+            if (!cancelled) setRetryAttempt(a => a + 1);
+          }, delay);
+        }
       });
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [retryAttempt]);
 
   const login = useCallback((user: User) => {
     jwt.saveToken(user.token);

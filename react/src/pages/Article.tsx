@@ -22,14 +22,28 @@ export function Article() {
 
   useEffect(() => {
     if (!slug) return;
+    let cancelled = false;
+    setArticle(null);
+    setComments([]);
     articlesApi
       .get(slug)
-      .then(({ article }) => setArticle(article))
-      .catch(() => navigate('/'));
+      .then(({ article }) => {
+        if (!cancelled) setArticle(article);
+      })
+      .catch(() => {
+        if (!cancelled) navigate('/');
+      });
     commentsApi
       .getAll(slug)
-      .then(({ comments }) => setComments(comments))
-      .catch(() => setComments([]));
+      .then(({ comments }) => {
+        if (!cancelled) setComments(comments);
+      })
+      .catch(() => {
+        if (!cancelled) setComments([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [slug, navigate]);
 
   const renderedBody = useMemo(() => {

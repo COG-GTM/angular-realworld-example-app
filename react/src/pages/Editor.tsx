@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../api/client';
 import { articlesApi } from '../api/services';
@@ -17,20 +17,33 @@ export function Editor() {
   const [tagField, setTagField] = useState('');
   const [errors, setErrors] = useState<Errors | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const userRef = useRef(user);
+  userRef.current = user;
 
   useEffect(() => {
     if (!slug) return;
-    articlesApi.get(slug).then(({ article }) => {
-      if (user && article.author.username !== user.username) {
-        navigate('/');
-        return;
-      }
-      setTitle(article.title);
-      setDescription(article.description);
-      setBody(article.body);
-      setTagList(article.tagList);
-    });
-  }, [slug, user, navigate]);
+    let cancelled = false;
+    articlesApi
+      .get(slug)
+      .then(({ article }) => {
+        if (cancelled) return;
+        const currentUser = userRef.current;
+        if (currentUser && article.author.username !== currentUser.username) {
+          navigate('/');
+          return;
+        }
+        setTitle(article.title);
+        setDescription(article.description);
+        setBody(article.body);
+        setTagList(article.tagList);
+      })
+      .catch(() => {
+        if (!cancelled) navigate('/');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, navigate]);
 
   const addTag = () => {
     const tag = tagField.trim();

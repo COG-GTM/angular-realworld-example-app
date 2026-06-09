@@ -74,6 +74,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setUser = useCallback((user: User) => {
+    jwt.saveToken(user.token);
     setUserState(user);
   }, []);
 

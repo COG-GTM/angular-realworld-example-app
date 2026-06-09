@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { useUser } from './context/UserContext';
@@ -24,6 +24,11 @@ function RequireGuest({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function EditorRoute() {
+  const { slug } = useParams();
+  return <Editor key={slug ?? 'new'} />;
+}
+
 export function App() {
   return (
     <>
@@ -35,7 +40,7 @@ export function App() {
           path="/login"
           element={
             <RequireGuest>
-              <Auth mode="login" />
+              <Auth key="login" mode="login" />
             </RequireGuest>
           }
         />
@@ -43,7 +48,7 @@ export function App() {
           path="/register"
           element={
             <RequireGuest>
-              <Auth mode="register" />
+              <Auth key="register" mode="register" />
             </RequireGuest>
           }
         />
@@ -61,7 +66,7 @@ export function App() {
           path="/editor"
           element={
             <RequireAuth>
-              <Editor />
+              <EditorRoute />
             </RequireAuth>
           }
         />
@@ -69,7 +74,7 @@ export function App() {
           path="/editor/:slug"
           element={
             <RequireAuth>
-              <Editor />
+              <EditorRoute />
             </RequireAuth>
           }
         />

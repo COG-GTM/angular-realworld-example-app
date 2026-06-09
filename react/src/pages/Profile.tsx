@@ -19,12 +19,20 @@ export function Profile() {
 
   useEffect(() => {
     if (!username) return;
+    let cancelled = false;
     setProfile(null);
     setNotFound(false);
     profilesApi
       .get(username)
-      .then(({ profile }) => setProfile(profile))
-      .catch(() => setNotFound(true));
+      .then(({ profile }) => {
+        if (!cancelled) setProfile(profile);
+      })
+      .catch(() => {
+        if (!cancelled) setNotFound(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
 
   const config: ArticleListConfig = useMemo(

@@ -28,7 +28,7 @@ export function App() {
             path="/login"
             element={
               <RedirectIfAuthenticated>
-                <AuthPage />
+                <AuthPage key="login" />
               </RedirectIfAuthenticated>
             }
           />
@@ -36,7 +36,7 @@ export function App() {
             path="/register"
             element={
               <RedirectIfAuthenticated>
-                <AuthPage />
+                <AuthPage key="register" />
               </RedirectIfAuthenticated>
             }
           />

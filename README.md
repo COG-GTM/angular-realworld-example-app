@@ -27,6 +27,21 @@ Run `bun run setup` again after a `git pull` that updates the `realworld` submod
 
 Run `bun run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## React migration (`react-app/`)
+
+This repository also contains a 1:1 port of the Conduit app to **React 18 + TypeScript + Vite**, located in [`react-app/`](./react-app). It preserves the exact same routes, the custom Conduit theme, and the external RealWorld API contract. The Angular source remains in place during the migration.
+
+```bash
+cd react-app
+bun install
+bun run dev          # Dev server at http://localhost:4200
+bun run build        # Type-check + production build to react-app/dist
+bun run lint         # ESLint (zero warnings)
+bun run test         # Unit tests (Vitest)
+```
+
+End-to-end Playwright tests (in the repo-root `e2e/` suite) run against the React app — the root `playwright.config.ts` boots `react-app` on port 4200.
+
 ## Functionality overview
 
 The example application is a social blogging site (i.e. a Medium.com clone) called "Conduit". It uses a custom API for all requests, including authentication. You can view a live demo over at [demo.realworld.show](https://demo.realworld.show)

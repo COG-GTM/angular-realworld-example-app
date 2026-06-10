@@ -76,6 +76,7 @@ describe('ProfileService', () => {
       const username = 'user-name_123';
       service.get(username).subscribe();
       const req = httpMock.expectOne(`/profiles/${username}`);
+      expect(req.request.method).toBe('GET');
       req.flush({ profile: { ...mockProfile, username } });
     });
 
@@ -315,6 +316,7 @@ describe('ProfileService', () => {
       const username = 'user123';
       service.get(username).subscribe();
       const req = httpMock.expectOne(`/profiles/${username}`);
+      expect(req.request.method).toBe('GET');
       req.flush({ profile: { ...mockProfile, username } });
     });
 
@@ -322,6 +324,7 @@ describe('ProfileService', () => {
       const username = 'user-name';
       service.get(username).subscribe();
       const req = httpMock.expectOne(`/profiles/${username}`);
+      expect(req.request.method).toBe('GET');
       req.flush({ profile: { ...mockProfile, username } });
     });
 
@@ -329,6 +332,7 @@ describe('ProfileService', () => {
       const username = 'user_name';
       service.get(username).subscribe();
       const req = httpMock.expectOne(`/profiles/${username}`);
+      expect(req.request.method).toBe('GET');
       req.flush({ profile: { ...mockProfile, username } });
     });
 
@@ -336,6 +340,7 @@ describe('ProfileService', () => {
       const username = 'a'.repeat(50);
       service.get(username).subscribe();
       const req = httpMock.expectOne(`/profiles/${username}`);
+      expect(req.request.method).toBe('GET');
       req.flush({ profile: { ...mockProfile, username } });
     });
 

@@ -132,6 +132,7 @@ describe('ArticlesService', () => {
         );
       });
 
+      expect(req.request.method).toBe('GET');
       req.flush({ articles: mockArticleList, articlesCount: 100 });
     });
 

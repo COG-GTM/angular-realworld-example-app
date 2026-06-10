@@ -102,6 +102,7 @@ describe('CommentsService', () => {
       const slug = 'article-with-special-chars-123';
       service.getAll(slug).subscribe();
       const req = httpMock.expectOne(`/articles/${slug}/comments`);
+      expect(req.request.method).toBe('GET');
       req.flush({ comments: mockComments });
     });
 
@@ -309,6 +310,7 @@ describe('CommentsService', () => {
       const commentId = '456';
       service.delete(commentId, slug).subscribe();
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
+      expect(req.request.method).toBe('DELETE');
       req.flush(null);
     });
 
@@ -317,6 +319,7 @@ describe('CommentsService', () => {
       const commentId = '550e8400-e29b-41d4-a716-446655440000';
       service.delete(commentId, slug).subscribe();
       const req = httpMock.expectOne(`/articles/${slug}/comments/${commentId}`);
+      expect(req.request.method).toBe('DELETE');
       req.flush(null);
     });
   });

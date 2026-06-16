@@ -1,12 +1,14 @@
 {
-  "name": "angular-realworld",
+  "name": "react-realworld",
   "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "ng": "ng",
     "setup": "git submodule init && git submodule update && bun install",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "vite --port 4200 --host",
+    "dev": "vite --port 4200 --host",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 4200",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
@@ -17,8 +19,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
     "test:e2e:disabled": "cat e2e/DISABLED_TESTS.md",
-    "format": "prettier --write \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
-    "format:check": "prettier --check \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
+    "format": "prettier --write \"**/*.{ts,tsx,html,css,json,md}\" \"!realworld/**\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,html,css,json,md}\" \"!realworld/**\"",
     "prepare": "husky install"
   },
   "engines": {
@@ -26,37 +28,33 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "21.1.1",
-    "@angular/common": "21.1.1",
-    "@angular/compiler": "21.1.1",
-    "@angular/core": "21.2.4",
-    "@angular/forms": "21.1.1",
-    "@angular/platform-browser": "21.1.1",
-    "@angular/platform-browser-dynamic": "21.1.1",
-    "@angular/router": "21.1.1",
-    "@rx-angular/cdk": "21.0.0",
-    "@rx-angular/template": "21.0.0",
+    "dompurify": "^3.2.4",
     "marked": "^17.0.1",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.8.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.2.2",
-    "@angular/build": "21.1.1",
-    "@angular/cli": "21.1.1",
-    "@angular/compiler-cli": "21.1.1",
     "@playwright/test": "^1.58.0",
-    "@types/marked": "^6.0.0",
-    "@vitest/ui": "^4.0.18",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/ui": "^2.1.9",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "lint-staged": "^16.2.7",
     "playwright": "^1.58.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
-    "vitest": "^4.0.18"
+    "vite": "^6.0.7",
+    "vite-plugin-static-copy": "^2.2.0",
+    "vitest": "^2.1.9"
   },
   "lint-staged": {
-    "*.{ts,html,css,json,md}": "prettier --write"
+    "*.{ts,tsx,html,css,json,md}": "prettier --write"
   }
 }

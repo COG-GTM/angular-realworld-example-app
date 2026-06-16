@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
+import type { UserUpdate } from '../api/auth';
 import type { Errors } from '../types/errors';
 import { ListErrors } from '../components/ListErrors';
 
@@ -20,7 +21,12 @@ export function Settings() {
     event.preventDefault();
     setIsSubmitting(true);
     try {
-      const user = await updateUser({ image, username, bio, email, password });
+      // Only send a password when one was entered; the API rejects an empty password.
+      const update: UserUpdate = { image, username, bio, email };
+      if (password) {
+        update.password = password;
+      }
+      const user = await updateUser(update);
       navigate(`/profile/${user.username}`);
     } catch (err) {
       setErrors(err as Errors);

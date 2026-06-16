@@ -1,10 +1,10 @@
-# ![Angular Example App](logo.png)
+# ![React Example App](logo.png)
 
-> ### Angular codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
+> ### React codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
 
 ### [RealWorld](https://realworld.show)
 
-This codebase was created to demonstrate a fully fledged application built with Angular that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more. We've gone to great lengths to adhere to the [Angular Styleguide](https://angular.dev/style-guide) & best practices.
+This codebase was created to demonstrate a fully fledged application built with React (TypeScript + Vite) that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more.
 
 # How it works
 
@@ -15,8 +15,8 @@ A global documentation for the project is available at [docs.realworld.show](htt
 Requires [Bun](https://bun.sh/docs/installation).
 
 ```bash
-git clone https://github.com/realworld-apps/angular-realworld-example-app.git
-cd angular-realworld-example-app
+git clone https://github.com/realworld-apps/react-realworld-example-app.git
+cd react-realworld-example-app
 bun run setup  # Init submodules + install dependencies
 bun run start
 ```
@@ -61,13 +61,13 @@ The example application is a social blogging site (i.e. a Medium.com clone) call
   - Show basic user info
   - List of articles populated from author's created articles or author's favorited articles
 
-## Realworld Angular
+## Stack
 
-This project may be too simple for getting a good understanding of the different ways an Angular project can be built.
-For a comprehensive understanding of how more complex Angular projects can be implemented, you may check the [
-RealWorld Angular](https://github.com/realworld-angular) organization that is specialized in Angular development, currently managed by [Gerome Grignon](https://github.com/geromegrignon).
+This implementation is built with [React](https://react.dev), [TypeScript](https://www.typescriptlang.org/),
+and [Vite](https://vite.dev). Routing uses [React Router](https://reactrouter.com); markdown is rendered with
+[marked](https://marked.js.org/) and sanitized with [DOMPurify](https://github.com/cure53/DOMPurify).
 
 ## License
 
 - **Project code**: [MIT License](LICENSE)
-- **Angular logo**: The Angular logo is a trademark of Google LLC, used to indicate this project is built with Angular.
+- **React logo**: The React logo is a trademark of Meta Platforms, Inc.

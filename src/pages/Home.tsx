@@ -83,7 +83,7 @@ export function Home() {
               <img src="/assets/conduit-logo.svg" alt="Conduit" className="banner-logo" />
             </h1>
             <p>
-              This is the <a href="https://github.com/realworld-apps/angular-realworld-example-app">Angular frontend</a>{' '}
+              This is the <a href="https://github.com/realworld-apps/react-realworld-example-app">React frontend</a>{' '}
               demo from the <a href="https://github.com/realworld-apps/realworld">Realworld</a> project.
               <br />
               This demo is connected to a demo backend that enforces session isolation.

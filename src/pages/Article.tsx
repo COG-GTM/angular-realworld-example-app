@@ -35,16 +35,27 @@ export function Article() {
   useEffect(() => {
     if (!slug) return;
     let cancelled = false;
-    Promise.all([articlesApi.get(slug), commentsApi.getAll(slug)])
-      .then(([loadedArticle, loadedComments]) => {
-        if (cancelled) return;
-        setArticle(loadedArticle);
-        setComments(loadedComments);
+
+    // Load the article and its comments independently so a slow/failed comments
+    // request never blocks the article body from rendering.
+    articlesApi
+      .get(slug)
+      .then(loadedArticle => {
+        if (!cancelled) setArticle(loadedArticle);
       })
       .catch((err: Errors) => {
-        if (cancelled) return;
-        setErrors(err?.errors ? err : { errors: { error: ['Failed to load article'] } });
+        if (!cancelled) setErrors(err?.errors ? err : { errors: { error: ['Failed to load article'] } });
       });
+
+    commentsApi
+      .getAll(slug)
+      .then(loadedComments => {
+        if (!cancelled) setComments(loadedComments);
+      })
+      .catch(() => {
+        // Comments are non-critical for viewing the article; ignore load errors.
+      });
+
     return () => {
       cancelled = true;
     };

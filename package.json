@@ -21,7 +21,7 @@
     "test:e2e:disabled": "cat e2e/DISABLED_TESTS.md",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,css,json,md}\" \"!realworld/**\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,css,json,md}\" \"!realworld/**\"",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.11.1"

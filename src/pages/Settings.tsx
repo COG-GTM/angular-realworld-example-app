@@ -23,7 +23,17 @@ export default function Settings() {
     setErrors(null);
 
     try {
-      const user = await updateUser({ image, username, bio, email, password });
+      // Only send a password when one was entered — the API rejects an empty password.
+      const payload: { image: string; username: string; bio: string; email: string; password?: string } = {
+        image,
+        username,
+        bio,
+        email,
+      };
+      if (password !== '') {
+        payload.password = password;
+      }
+      const user = await updateUser(payload);
       navigate(`/profile/${user.username}`);
     } catch (err) {
       setErrors(err as Errors);

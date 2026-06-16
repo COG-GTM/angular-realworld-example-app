@@ -13,7 +13,7 @@ export interface AuthContextValue {
   login: (credentials: authApi.LoginCredentials) => Promise<User>;
   register: (credentials: authApi.RegisterCredentials) => Promise<User>;
   logout: () => void;
-  updateUser: (user: Partial<User>) => Promise<User>;
+  updateUser: (user: authApi.UserUpdate) => Promise<User>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     purgeAuth();
   }, [purgeAuth]);
 
-  const updateUser = useCallback(async (user: Partial<User>) => {
+  const updateUser = useCallback(async (user: authApi.UserUpdate) => {
     const updated = await authApi.updateUser(user);
     setCurrentUser(updated);
     return updated;

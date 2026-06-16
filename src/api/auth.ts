@@ -12,6 +12,11 @@ export interface RegisterCredentials {
   password: string;
 }
 
+/** Fields editable on the settings page (User fields plus an optional password). */
+export interface UserUpdate extends Partial<User> {
+  password?: string;
+}
+
 export function login(credentials: LoginCredentials): Promise<User> {
   return apiFetch<{ user: User }>('/users/login', { method: 'POST', body: { user: credentials } }).then(d => d.user);
 }
@@ -24,6 +29,6 @@ export function getCurrentUser(): Promise<User> {
   return apiFetch<{ user: User }>('/user').then(d => d.user);
 }
 
-export function updateUser(user: Partial<User>): Promise<User> {
+export function updateUser(user: UserUpdate): Promise<User> {
   return apiFetch<{ user: User }>('/user', { method: 'PUT', body: { user } }).then(d => d.user);
 }

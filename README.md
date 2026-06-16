@@ -1,10 +1,12 @@
-# ![Angular Example App](logo.png)
+# ![React Example App](logo.png)
 
-> ### Angular codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
+> ### React codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://realworld.show) spec and API.
 
 ### [RealWorld](https://realworld.show)
 
-This codebase was created to demonstrate a fully fledged application built with Angular that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more. We've gone to great lengths to adhere to the [Angular Styleguide](https://angular.dev/style-guide) & best practices.
+This codebase was created to demonstrate a fully fledged application built with React that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more.
+
+It is built with [Vite](https://vitejs.dev/), [React](https://react.dev/), TypeScript and [React Router](https://reactrouter.com/), using a small fetch-based API client and a React context for authentication state.
 
 # How it works
 
@@ -15,8 +17,8 @@ A global documentation for the project is available at [docs.realworld.show](htt
 Requires [Bun](https://bun.sh/docs/installation).
 
 ```bash
-git clone https://github.com/realworld-apps/angular-realworld-example-app.git
-cd angular-realworld-example-app
+git clone https://github.com/realworld-apps/react-realworld-example-app.git
+cd react-realworld-example-app
 bun run setup  # Init submodules + install dependencies
 bun run start
 ```
@@ -61,13 +63,19 @@ The example application is a social blogging site (i.e. a Medium.com clone) call
   - Show basic user info
   - List of articles populated from author's created articles or author's favorited articles
 
-## Realworld Angular
+## Project structure
 
-This project may be too simple for getting a good understanding of the different ways an Angular project can be built.
-For a comprehensive understanding of how more complex Angular projects can be implemented, you may check the [
-RealWorld Angular](https://github.com/realworld-angular) organization that is specialized in Angular development, currently managed by [Gerome Grignon](https://github.com/geromegrignon).
+```
+src/
+  api/         fetch-based API client (base URL, JWT header, error normalization)
+  auth/        AuthContext, JWT storage, route guards, debug interface
+  services/    thin wrappers around the RealWorld API endpoints
+  shared/      ListErrors, defaultImage, Markdown (sanitized) utilities
+  components/  ArticleMeta, ArticlePreview, ArticleList, Favorite/Follow buttons, ArticleComment
+  layout/      Header, Footer
+  pages/       Home, Auth, Settings, Editor, Article, Profile (+ articles/favorites)
+```
 
 ## License
 
 - **Project code**: [MIT License](LICENSE)
-- **Angular logo**: The Angular logo is a trademark of Google LLC, used to indicate this project is built with Angular.

@@ -1,15 +1,16 @@
 {
-  "name": "angular-realworld",
+  "name": "react-realworld",
   "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "ng": "ng",
     "setup": "git submodule init && git submodule update && bun install",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "vitest",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4200 --strictPort",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test --grep-invert @security",
     "test:e2e:security": "playwright test --grep @security",
     "test:e2e:ui": "playwright test --ui",
@@ -17,8 +18,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
     "test:e2e:disabled": "cat e2e/DISABLED_TESTS.md",
-    "format": "prettier --write \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
-    "format:check": "prettier --check \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,css,json,md}\" \"!realworld/**\" \"!dist/**\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,css,json,md}\" \"!realworld/**\" \"!dist/**\"",
     "prepare": "husky install"
   },
   "engines": {
@@ -26,27 +27,19 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "21.1.1",
-    "@angular/common": "21.1.1",
-    "@angular/compiler": "21.1.1",
-    "@angular/core": "21.2.4",
-    "@angular/forms": "21.1.1",
-    "@angular/platform-browser": "21.1.1",
-    "@angular/platform-browser-dynamic": "21.1.1",
-    "@angular/router": "21.1.1",
-    "@rx-angular/cdk": "21.0.0",
-    "@rx-angular/template": "21.0.0",
+    "dompurify": "^3.2.4",
     "marked": "^17.0.1",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.8.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.2.2",
-    "@angular/build": "21.1.1",
-    "@angular/cli": "21.1.1",
-    "@angular/compiler-cli": "21.1.1",
     "@playwright/test": "^1.58.0",
-    "@types/marked": "^6.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
     "@vitest/ui": "^4.0.18",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
@@ -54,9 +47,11 @@
     "playwright": "^1.58.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.3",
+    "vite": "^6.0.7",
+    "vite-plugin-static-copy": "^2.2.0",
     "vitest": "^4.0.18"
   },
   "lint-staged": {
-    "*.{ts,html,css,json,md}": "prettier --write"
+    "*.{ts,tsx,js,jsx,html,css,json,md}": "prettier --write"
   }
 }

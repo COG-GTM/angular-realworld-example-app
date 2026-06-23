@@ -1,0 +1,18 @@
+/*
+ * The shared RealWorld theme scopes its sticky-footer rules to the Angular
+ * `app-root` host element. The React app mounts into `#root`, so these rules
+ * mirror the same flex layout to keep the footer pinned to the bottom.
+ */
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#root > *:not(footer) {
+  flex-shrink: 0;
+}
+
+#root > footer {
+  margin-top: auto;
+}

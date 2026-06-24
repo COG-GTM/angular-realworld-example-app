@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Header, Footer } from './components';
+import { usePageTracking } from './hooks/usePageTracking';
 
 const Home = lazy(() => import('./pages/Home'));
 const Auth = lazy(() => import('./pages/Auth'));
@@ -15,6 +16,8 @@ function Loader() {
 }
 
 function AppRoutes() {
+  usePageTracking();
+
   return (
     <Suspense fallback={<Loader />}>
       <Routes>

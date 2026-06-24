@@ -20,6 +20,5 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
-  "include": ["src"],
-  "exclude": ["src/app", "src/main.ts", "src/test-setup.ts", "src/**/*.spec.ts"]
+  "include": ["src"]
 }

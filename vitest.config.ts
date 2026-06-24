@@ -1,22 +1,19 @@
 import { defineConfig } from 'vitest/config';
-import angular from '@analogjs/vite-plugin-angular';
+import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
-  plugins: [angular()],
+  plugins: [react()],
   test: {
-    globals: false,
+    globals: true,
     environment: 'jsdom',
-    setupFiles: [fileURLToPath(new URL('./src/test-setup.ts', import.meta.url))],
-    include: ['src/**/*.spec.ts'],
+    setupFiles: [fileURLToPath(new URL('./src/test-setup-react.ts', import.meta.url))],
+    include: ['src/__tests__/**/*.test.{ts,tsx}'],
     pool: 'threads',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
-  },
-  define: {
-    ngDevMode: true,
   },
   resolve: {
     alias: {

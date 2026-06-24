@@ -157,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = useCallback(
     async (value: UpdateUserInput) => {
       const data = await apiClient.put<{ user: User }>('/user', { user: value });
+      jwtService.saveToken(data.user.token);
       applyUser(data.user);
       return data.user;
     },

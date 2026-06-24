@@ -45,7 +45,7 @@ export function App() {
             path="/login"
             element={
               <GuestOnly>
-                <Auth />
+                <Auth key="login" />
               </GuestOnly>
             }
           />
@@ -53,7 +53,7 @@ export function App() {
             path="/register"
             element={
               <GuestOnly>
-                <Auth />
+                <Auth key="register" />
               </GuestOnly>
             }
           />

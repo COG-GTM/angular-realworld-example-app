@@ -6,6 +6,10 @@
 
 This codebase was created to demonstrate a fully fledged application built with Angular that interacts with an actual backend server including CRUD operations, authentication, routing, pagination, and more. We've gone to great lengths to adhere to the [Angular Styleguide](https://angular.dev/style-guide) & best practices.
 
+# Documentation
+
+In-depth developer documentation for this codebase lives in [`docs/`](docs/README.md), covering the architecture, core services, feature modules, shared components, testing strategy, and build/deployment pipeline.
+
 # How it works
 
 A global documentation for the project is available at [docs.realworld.show](https://docs.realworld.show/introduction/).

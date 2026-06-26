@@ -53,7 +53,7 @@ export function Article() {
     return () => {
       cancelled = true;
     };
-  }, [article]);
+  }, [article?.body]);
 
   const canModify = !!user && !!article && user.username === article.author.username;
 

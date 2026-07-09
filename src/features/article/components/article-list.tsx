@@ -44,9 +44,11 @@ export function ArticleList({
         if (!active) {
           return;
         }
+        const articles = Array.isArray(data?.articles) ? data.articles : [];
+        const articlesCount = typeof data?.articlesCount === 'number' ? data.articlesCount : 0;
         setLoading(LoadingState.LOADED);
-        setResults(data.articles);
-        setTotalPages(Array.from(new Array(Math.ceil(data.articlesCount / limit)), (_, index) => index + 1));
+        setResults(articles);
+        setTotalPages(Array.from(new Array(Math.ceil(articlesCount / limit)), (_, index) => index + 1));
       })
       .catch(() => {
         if (active) {

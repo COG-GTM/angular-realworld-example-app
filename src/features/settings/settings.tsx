@@ -40,8 +40,14 @@ export function Settings() {
 
   const submitForm = async (values: SettingsForm) => {
     setIsSubmitting(true);
+    // Only send a new password when the user actually entered one; the API
+    // rejects an empty password string.
+    const payload: Partial<User> & { password?: string } = { ...values };
+    if (!payload.password) {
+      delete payload.password;
+    }
     try {
-      const { user } = await update(values as Partial<User>);
+      const { user } = await update(payload);
       navigate(`/profile/${user.username}`);
     } catch (err) {
       setErrors(err as Errors);

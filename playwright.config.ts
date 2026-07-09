@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 import { baseConfig } from './e2e/playwright.base';
 
 /**
- * Angular-specific Playwright configuration.
- * Extends the shared RealWorld base config with the Angular dev server.
+ * React-specific Playwright configuration.
+ * Extends the shared RealWorld base config with the Vite dev server.
  */
 export default defineConfig({
   ...baseConfig,
@@ -14,7 +14,7 @@ export default defineConfig({
   },
 
   webServer: {
-    command: 'npm run start',
+    command: 'bun run start',
     url: 'http://localhost:4200',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

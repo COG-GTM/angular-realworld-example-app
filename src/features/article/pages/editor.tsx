@@ -17,7 +17,7 @@ export function Editor() {
   const navigate = useNavigate();
   const { getCurrentUser } = useUser();
 
-  const { register, handleSubmit, reset, getValues } = useForm<ArticleForm>({
+  const { register, reset, getValues } = useForm<ArticleForm>({
     defaultValues: { title: '', description: '', body: '' },
   });
 
@@ -94,7 +94,7 @@ export function Editor() {
           <div className="col-md-10 offset-md-1 col-xs-12">
             <ListErrors errors={errors} />
 
-            <form onSubmit={handleSubmit(submitForm)}>
+            <form onSubmit={event => event.preventDefault()}>
               <fieldset disabled={isSubmitting}>
                 <fieldset className="form-group">
                   <input

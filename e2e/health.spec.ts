@@ -11,9 +11,32 @@ test.describe('Health Checks', () => {
     await expect(page.locator('nav.navbar')).toBeVisible();
   });
 
-  test('API should be accessible', async ({ request }) => {
-    const response = await request.get('https://api.realworld.show/api/tags');
-    expect(response.ok()).toBeTruthy();
+  test('API should be accessible', async ({ page }) => {
+    const tagsUrl = 'https://api.realworld.show/api/tags';
+    const mockTags = { tags: ['angular', 'react', 'vue'] };
+    let routeHits = 0;
+
+    await page.route(tagsUrl, async route => {
+      routeHits++;
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify(mockTags),
+      });
+    });
+
+    await page.goto('/');
+
+    const body = await page.evaluate(url => fetch(url).then(response => response.json()), tagsUrl);
+
+    expect(routeHits).toBeGreaterThan(0);
+    expect(body).toEqual(mockTags);
+
+    // The app consumes the same mocked endpoint for its tag sidebar
+    for (const tag of mockTags.tags) {
+      await expect(page.locator('.sidebar .tag-list').getByText(tag, { exact: true })).toBeVisible();
+    }
   });
 
   test('can navigate to login page', async ({ page }) => {

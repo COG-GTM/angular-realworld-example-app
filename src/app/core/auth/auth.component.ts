@@ -61,7 +61,7 @@ export default class AuthComponent implements OnInit {
     this.isSubmitting.set(true);
     this.errors.set({ errors: {} });
 
-    let observable =
+    const observable =
       this.authType === 'login'
         ? this.userService.login(this.authForm.value as { email: string; password: string })
         : this.userService.register(

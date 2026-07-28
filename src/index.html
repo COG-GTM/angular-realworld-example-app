@@ -5,10 +5,23 @@
     <title>Conduit</title>
     <base href="/" />
 
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self';
+               style-src 'self' 'unsafe-inline' https://code.ionicframework.com https://fonts.googleapis.com;
+               font-src 'self' data: https://code.ionicframework.com https://fonts.gstatic.com;
+               img-src 'self' data: https:;
+               connect-src 'self' https://api.realworld.show;
+               object-src 'none';
+               base-uri 'self';
+               form-action 'self'"
+    />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <link
-      href="//fonts.googleapis.com/css?family=Titillium+Web:700|Lora:400,400italic,700,700italic|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic"
+      href="https://fonts.googleapis.com/css?family=Titillium+Web:700|Lora:400,400italic,700,700italic|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic"
       rel="stylesheet"
       type="text/css"
     />

@@ -14,11 +14,16 @@ describe('JwtService', () => {
   });
 
   beforeEach(() => {
-    // Create spy for localStorage
+    // Create spy for localStorage, backed by the spy object itself so tests can
+    // read/write entries directly (e.g. localStorageSpy['jwtToken'])
     localStorageSpy = {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
+      getItem: vi.fn((key: string) => (key in localStorageSpy ? localStorageSpy[key] : null)),
+      setItem: vi.fn((key: string, value: string) => {
+        localStorageSpy[key] = value;
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete localStorageSpy[key];
+      }),
       clear: vi.fn(),
     };
 
@@ -53,9 +58,9 @@ describe('JwtService', () => {
       expect(token).toBe(mockToken);
     });
 
-    it('should return undefined when no token exists', () => {
+    it('should return null when no token exists', () => {
       const token = service.getToken();
-      expect(token).toBeUndefined();
+      expect(token).toBeNull();
     });
 
     it('should handle empty string token', () => {
@@ -166,9 +171,8 @@ describe('JwtService', () => {
     it('should completely remove token', () => {
       localStorageSpy['jwtToken'] = 'test-token';
       service.destroyToken();
-      delete localStorageSpy['jwtToken'];
       const token = service.getToken();
-      expect(token).toBeUndefined();
+      expect(token).toBeNull();
     });
 
     it('should be idempotent', () => {
@@ -304,8 +308,7 @@ describe('JwtService', () => {
       expect(service.getToken()).toBe(refreshedToken);
       // User logs out
       service.destroyToken();
-      delete localStorageSpy['jwtToken'];
-      expect(service.getToken()).toBeUndefined();
+      expect(service.getToken()).toBeNull();
     });
 
     it('should support session management', () => {

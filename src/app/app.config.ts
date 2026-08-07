@@ -1,4 +1,10 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -14,6 +20,9 @@ import { User } from './core/auth/user.model';
 /**
  * Debug interface for testing - exposes app state in a framework-agnostic way.
  * Tests can use this instead of directly accessing localStorage or internal state.
+ *
+ * Only installed in development builds: it exposes the session JWT and the current
+ * user, so it must never be reachable from a production bundle.
  */
 export interface ConduitDebug {
   getToken: () => string | null;
@@ -28,7 +37,7 @@ declare global {
 }
 
 /**
- * Sets up the debug interface on window.__conduit_debug__
+ * Sets up the debug interface on window.__conduit_debug__ in development builds only.
  */
 function setupDebugInterface(jwtService: JwtService, userService: UserService): void {
   let currentAuthState: AuthState = 'loading';
@@ -55,7 +64,11 @@ function setupDebugInterface(jwtService: JwtService, userService: UserService): 
  */
 export function initAuth(jwtService: JwtService, userService: UserService) {
   return () => {
-    setupDebugInterface(jwtService, userService);
+    // The debug interface hands out the raw JWT and current user, so it is only
+    // installed in development builds (isDevMode() is compiled to false in production).
+    if (isDevMode()) {
+      setupDebugInterface(jwtService, userService);
+    }
 
     if (jwtService.getToken()) {
       return userService.getCurrentUser();

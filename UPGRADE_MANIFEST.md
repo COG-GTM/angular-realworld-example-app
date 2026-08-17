@@ -89,6 +89,9 @@ Deviations from the plan above:
 - `src/test-setup.ts` migrated off zone.js to the zoneless Angular testing API, and the per-spec
   zone.js imports / duplicate `initTestEnvironment` blocks were removed. This fixes the pre-existing
   red unit-test suite.
+- `SettingsComponent.submitForm()` no longer sends an empty `password` to `PUT /user`; the API rejects
+  it with 422 (`password must be a string between 8 and 128 chars`), which caused the pre-existing
+  `e2e/settings.spec.ts` failures.
 - Angular migrations applied: `withXhr()` added to `provideHttpClient`, `$safeNavigationMigration()`
   wrapper in `article.component.html`, `extendedDiagnostics` suppressions in `tsconfig.app.json`,
   deprecated `baseUrl` removed from `tsconfig.json` (TS 6.0 error TS5101).
@@ -98,11 +101,11 @@ Deviations from the plan above:
 
 Final verification on `upgrade/integration` (Node 22.23.2):
 
-| Check                       | Result                                                                                   |
-| --------------------------- | ---------------------------------------------------------------------------------------- |
-| `bun run build`             | PASS                                                                                     |
-| `bun run test -- --run`     | PASS — 6/6 files, 180/180 tests (was fully red at baseline)                              |
-| `bun run test:coverage`     | PASS — 83.83% statements                                                                 |
-| `bun run test:e2e`          | 116 passed, 6 failed — the same pre-existing `e2e/settings.spec.ts` failures as baseline |
-| `bun run test:e2e:security` | PASS — 16/16                                                                             |
-| `bun run format:check`      | PASS                                                                                     |
+| Check                       | Result                                                         |
+| --------------------------- | -------------------------------------------------------------- |
+| `bun run build`             | PASS                                                           |
+| `bun run test -- --run`     | PASS — 6/6 files, 180/180 tests (was fully red at baseline)    |
+| `bun run test:coverage`     | PASS — 83.83% statements                                       |
+| `bun run test:e2e`          | PASS — 122/122 after fixing the pre-existing settings failures |
+| `bun run test:e2e:security` | PASS — 16/16                                                   |
+| `bun run format:check`      | PASS                                                           |

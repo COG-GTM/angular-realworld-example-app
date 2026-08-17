@@ -19,7 +19,7 @@
     "test:e2e:disabled": "cat e2e/DISABLED_TESTS.md",
     "format": "prettier --write \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
     "format:check": "prettier --check \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.11.1"
@@ -51,9 +51,9 @@
     "@vitest/ui": "^4.1.10",
     "husky": "^9.1.7",
     "jsdom": "^30.0.1",
-    "lint-staged": "^16.2.7",
+    "lint-staged": "^17.3.0",
     "playwright": "^1.62.1",
-    "prettier": "^3.8.1",
+    "prettier": "^3.9.6",
     "typescript": "~6.0.3",
     "vitest": "^4.1.10"
   },

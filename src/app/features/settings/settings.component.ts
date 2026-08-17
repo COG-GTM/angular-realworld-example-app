@@ -60,8 +60,11 @@ export default class SettingsComponent implements OnInit {
   submitForm() {
     this.isSubmitting.set(true);
 
+    const { password, ...profile } = this.settingsForm.value;
+    const payload: Partial<User> & { password?: string } = password ? { ...profile, password } : profile;
+
     this.userService
-      .update(this.settingsForm.value)
+      .update(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ user }) => void this.router.navigate(['/profile/', user.username]),

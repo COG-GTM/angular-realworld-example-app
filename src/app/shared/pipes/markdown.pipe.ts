@@ -1,5 +1,6 @@
 import { inject, Pipe, PipeTransform, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { marked } from 'marked';
 
 @Pipe({
   name: 'markdown',
@@ -8,7 +9,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class MarkdownPipe implements PipeTransform {
   domSanitizer = inject(DomSanitizer);
   async transform(content: string): Promise<string> {
-    const { marked } = await import('marked');
-    return this.domSanitizer.sanitize(SecurityContext.HTML, marked.parse(content)) || '';
+    const html = marked.parse(content, { async: false }) as string;
+    return this.domSanitizer.sanitize(SecurityContext.HTML, html) || '';
   }
 }

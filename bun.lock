@@ -13,8 +13,8 @@
         "@angular/platform-browser": "22.1.2",
         "@angular/platform-browser-dynamic": "22.1.2",
         "@angular/router": "22.1.2",
-        "@rx-angular/cdk": "21.0.0",
-        "@rx-angular/template": "21.0.0",
+        "@rx-angular/cdk": "21.1.1",
+        "@rx-angular/template": "21.2.1",
         "marked": "^17.0.1",
         "rxjs": "^7.8.2",
         "tslib": "^2.8.1",
@@ -456,9 +456,9 @@
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.56.0", "", { "os": "win32", "cpu": "x64" }, "sha512-H8AE9Ur/t0+1VXujj90w0HrSOuv0Nq9r1vSZF2t5km20NTfosQsGGUXDaKdQZzwuLts7IyL1fYT4hM95TI9c4g=="],
 
-    "@rx-angular/cdk": ["@rx-angular/cdk@21.0.0", "", { "dependencies": { "ng-morph": "^4.0.3", "tslib": "^2.4.1" }, "peerDependencies": { "@angular/core": "^21.0.0", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-nG/9HQfyP6mOyxDJTaTB1K1YHj6u2Q/e/KfNWqLYhcphexHBUrAdVCCpJXPqw1VXmNA00tqxlmAJsH73GVlWYg=="],
+    "@rx-angular/cdk": ["@rx-angular/cdk@21.1.1", "", { "dependencies": { "ng-morph": "^4.0.3", "tslib": "^2.4.1" }, "peerDependencies": { "@angular/core": "^21.0.0", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-mzCcx73D/5UcH/v0Dp4VG2x9Z02IZ8yGHCVKLjXHPLJSZI3+wTEImZ4gKJsOZXA1npHy4Dn9EwOyoC68ApV8kQ=="],
 
-    "@rx-angular/template": ["@rx-angular/template@21.0.0", "", { "dependencies": { "ng-morph": "^4.0.3", "tslib": "^2.4.1" }, "peerDependencies": { "@angular/core": "^21.0.0", "@rx-angular/cdk": "^21.0.0", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-LdLkX9R5M8Pzki9dbMd+uDCgafBdOFrkd/KJBczrl64lK+I+uUzrJ+ih1lh/OoGmtMqGjRs0zqXt5ZpKtWrVCQ=="],
+    "@rx-angular/template": ["@rx-angular/template@21.2.1", "", { "dependencies": { "ng-morph": "^4.0.3", "tslib": "^2.4.1" }, "peerDependencies": { "@angular/core": "^21.0.0", "@rx-angular/cdk": "21.1.1", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-SwzpfwNyz8kmpHY/2STldlDv0m+xNYIxjm3Z6wnx7Xl7bsCQtuD1Wtwp0ZMs4mKsm90yRQFBz2qniLUktqmG4Q=="],
 
     "@schematics/angular": ["@schematics/angular@22.1.4", "", { "dependencies": { "@angular-devkit/core": "22.1.4", "@angular-devkit/schematics": "22.1.4", "jsonc-parser": "3.3.1", "typescript": "6.0.3" } }, "sha512-uiYKuiCnkTEbs4eOU1QJlM5NPw6BR1qgpct8VlrhS4n861WCCjTy5cxiAWJ3Doc0R72d44j3uoBfAEp7KEVn2w=="],
 

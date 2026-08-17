@@ -71,4 +71,38 @@ Consequences documented for downstream sessions:
 
 ### engines
 
-`node >=20.11.1` — re-evaluate in Phase 3 against the Angular 22 / toolchain requirements.
+`node >=20.11.1` -> **`>=22.22.3`** (Angular CLI 22 refuses to run on Node 20; lint-staged 17 also
+declares `node >=22.22.1`).
+
+## Phase 3 — integration result
+
+All seven branches merged into `upgrade/integration`. Conflicts were confined to `package.json` and
+`bun.lock`; each session's dependency lines were taken and `bun.lock` regenerated from scratch with
+`bun install`.
+
+Deviations from the plan above:
+
+- `typescript` moved to `~6.0.3` on the Angular branch (Session A) because `ng update` requires it —
+  Session G confirmed it is the newest version inside Angular 22's `>=6.0 <6.1` peer range.
+- `@vitest/coverage-v8 ^4.1.10` added (Session E): `bun run test:coverage` was failing with a missing
+  dependency.
+- `src/test-setup.ts` migrated off zone.js to the zoneless Angular testing API, and the per-spec
+  zone.js imports / duplicate `initTestEnvironment` blocks were removed. This fixes the pre-existing
+  red unit-test suite.
+- Angular migrations applied: `withXhr()` added to `provideHttpClient`, `$safeNavigationMigration()`
+  wrapper in `article.component.html`, `extendedDiagnostics` suppressions in `tsconfig.app.json`,
+  deprecated `baseUrl` removed from `tsconfig.json` (TS 6.0 error TS5101).
+- `marked` v18 migration: static named import in `markdown.pipe.ts`, `@types/marked` removed.
+- husky modernized: `prepare` is now `husky` (not the deprecated `husky install`) and `.husky/pre-commit`
+  no longer contains the legacy `husky.sh` shim that would fail in husky v10.
+
+Final verification on `upgrade/integration` (Node 22.23.2):
+
+| Check                       | Result                                                                                   |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| `bun run build`             | PASS                                                                                     |
+| `bun run test -- --run`     | PASS — 6/6 files, 180/180 tests (was fully red at baseline)                              |
+| `bun run test:coverage`     | PASS — 83.83% statements                                                                 |
+| `bun run test:e2e`          | 116 passed, 6 failed — the same pre-existing `e2e/settings.spec.ts` failures as baseline |
+| `bun run test:e2e:security` | PASS — 16/16                                                                             |
+| `bun run format:check`      | PASS                                                                                     |

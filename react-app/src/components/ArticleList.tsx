@@ -49,7 +49,9 @@ export function ArticleList({
         setTotalPages(Array.from(new Array(Math.ceil(data.articlesCount / limit)), (_, index) => index + 1));
       })
       .catch(() => {
-        if (!cancelled) setLoading(LoadingState.LOADED);
+        if (cancelled) return;
+        setLoading(LoadingState.LOADED);
+        setTotalPages([]);
       });
 
     return () => {

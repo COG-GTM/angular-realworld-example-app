@@ -74,8 +74,13 @@ export default function Article() {
   const deleteArticle = async () => {
     if (!article) return;
     setIsDeleting(true);
-    await articlesApi.delete(article.slug);
-    navigate('/');
+    try {
+      await articlesApi.delete(article.slug);
+      navigate('/');
+    } catch (error) {
+      setErrors((error as ApiError).errors as unknown as Errors | null);
+      setIsDeleting(false);
+    }
   };
 
   const addComment = async (event: FormEvent) => {

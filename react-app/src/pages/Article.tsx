@@ -30,6 +30,10 @@ export default function Article() {
     if (!slug) return;
     let cancelled = false;
 
+    setArticle(null);
+    setComments([]);
+    setErrors(null);
+
     Promise.all([articlesApi.get(slug), commentsApi.getAll(slug)])
       .then(([loadedArticle, loadedComments]) => {
         if (cancelled) return;

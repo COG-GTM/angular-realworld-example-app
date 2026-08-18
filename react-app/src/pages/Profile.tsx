@@ -18,6 +18,9 @@ export default function Profile() {
     if (!username) return;
     let cancelled = false;
 
+    setProfile(null);
+    setErrors(null);
+
     profilesApi
       .get(username)
       .then(loaded => {

@@ -112,7 +112,13 @@ export default function Settings() {
 
             <hr />
 
-            <button className="btn btn-outline-danger" onClick={logout}>
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => {
+                logout();
+                navigate('/');
+              }}
+            >
               Or click here to logout.
             </button>
           </div>

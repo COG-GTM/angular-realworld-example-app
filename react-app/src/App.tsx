@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useParams } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { RequireAuth } from './components/RequireAuth';
@@ -13,6 +13,12 @@ const ProfileFavorites = lazy(() => import('./pages/ProfileFavorites'));
 const Editor = lazy(() => import('./pages/Editor'));
 const Article = lazy(() => import('./pages/Article'));
 
+/** Angular destroys the editor component per slug; remount so form state never leaks between articles. */
+function KeyedEditor() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Editor key={slug} />;
+}
+
 export function App() {
   return (
     <>
@@ -21,8 +27,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tag/:tag" element={<Home />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/register" element={<Auth />} />
+          <Route path="/login" element={<Auth key="login" />} />
+          <Route path="/register" element={<Auth key="register" />} />
           <Route
             path="/settings"
             element={
@@ -39,7 +45,7 @@ export function App() {
             path="/editor"
             element={
               <RequireAuth>
-                <Editor />
+                <Editor key="new" />
               </RequireAuth>
             }
           />
@@ -47,7 +53,7 @@ export function App() {
             path="/editor/:slug"
             element={
               <RequireAuth>
-                <Editor />
+                <KeyedEditor />
               </RequireAuth>
             }
           />

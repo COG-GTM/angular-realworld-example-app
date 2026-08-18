@@ -69,10 +69,6 @@ interface JsonBody {
   [key: string]: unknown;
 }
 
-function slice(offset: number, limit: number) {
-  return ARTICLES.slice(offset, offset + limit);
-}
-
 function articlesResponse(url: URL, feed: boolean): JsonBody {
   const limit = Number(url.searchParams.get('limit') ?? '10');
   const offset = Number(url.searchParams.get('offset') ?? '0');

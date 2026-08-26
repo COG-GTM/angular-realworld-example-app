@@ -9,6 +9,7 @@ export class MarkdownPipe implements PipeTransform {
   domSanitizer = inject(DomSanitizer);
   async transform(content: string): Promise<string> {
     const { marked } = await import('marked');
-    return this.domSanitizer.sanitize(SecurityContext.HTML, marked.parse(content)) || '';
+    const html = marked.parse(content, { async: false });
+    return this.domSanitizer.sanitize(SecurityContext.HTML, html) || '';
   }
 }

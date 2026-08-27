@@ -13,6 +13,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      include: ['src/app/**/*.ts'],
+      exclude: ['src/app/**/*.spec.ts', 'src/app/**/*.model.ts'],
+      thresholds: {
+        statements: 75,
+        lines: 75,
+        functions: 75,
+      },
     },
   },
   define: {

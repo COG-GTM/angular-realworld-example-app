@@ -325,6 +325,151 @@ describe('UserService', () => {
     });
   });
 
+  describe('Unavailable mode (5XX / network errors on /user)', () => {
+    const flushUserError = (status: number, statusText: string) => {
+      service.getCurrentUser().subscribe();
+      const req = httpMock.expectOne('/user');
+      req.flush('error', { status, statusText });
+    };
+
+    it('should enter unavailable state on 500 error without destroying the token', async () => {
+      flushUserError(500, 'Server Error');
+      const state = await firstValueFrom(service.authState);
+      expect(state).toBe('unavailable');
+      expect(jwtService.destroyToken).not.toHaveBeenCalled();
+    });
+
+    it('should enter unavailable state on network error (status 0)', async () => {
+      service.getCurrentUser().subscribe();
+      const req = httpMock.expectOne('/user');
+      req.error(new ProgressEvent('error'));
+      const state = await firstValueFrom(service.authState);
+      expect(state).toBe('unavailable');
+      expect(jwtService.destroyToken).not.toHaveBeenCalled();
+    });
+
+    it('should set currentUser to null when unavailable', async () => {
+      flushUserError(503, 'Service Unavailable');
+      const user = await firstValueFrom(service.currentUser);
+      expect(user).toBeNull();
+    });
+
+    it('should become unauthenticated (purge) on 4XX error', async () => {
+      flushUserError(403, 'Forbidden');
+      const state = await firstValueFrom(service.authState);
+      expect(state).toBe('unauthenticated');
+      expect(jwtService.destroyToken).toHaveBeenCalled();
+    });
+
+    it('should schedule a retry after 2s when a token exists', async () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('stored-token');
+        flushUserError(500, 'Server Error');
+        expect(httpMock.match('/user').length).toBe(0);
+        vi.advanceTimersByTime(2000);
+        const retryRequests = httpMock.match('/user');
+        expect(retryRequests.length).toBe(1);
+        retryRequests[0].flush({ user: mockUser });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should use exponential backoff for subsequent retries (2s then 4s)', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('stored-token');
+        flushUserError(500, 'Server Error');
+        vi.advanceTimersByTime(2000);
+        const firstRetry = httpMock.match('/user');
+        expect(firstRetry.length).toBe(1);
+        firstRetry[0].flush('error', { status: 500, statusText: 'Server Error' });
+        // Second retry should not fire before 4s
+        vi.advanceTimersByTime(2000);
+        expect(httpMock.match('/user').length).toBe(0);
+        vi.advanceTimersByTime(2000);
+        const secondRetry = httpMock.match('/user');
+        expect(secondRetry.length).toBe(1);
+        secondRetry[0].flush({ user: mockUser });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should not schedule a retry when no token exists', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue(null);
+        flushUserError(500, 'Server Error');
+        vi.advanceTimersByTime(60000);
+        expect(httpMock.match('/user').length).toBe(0);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should cancel pending retry when setAuth is called', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('stored-token');
+        flushUserError(500, 'Server Error');
+        service.setAuth(mockUser);
+        vi.advanceTimersByTime(60000);
+        expect(httpMock.match('/user').length).toBe(0);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should cancel pending retry when purgeAuth is called', () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('stored-token');
+        flushUserError(500, 'Server Error');
+        service.purgeAuth();
+        vi.advanceTimersByTime(60000);
+        expect(httpMock.match('/user').length).toBe(0);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should recover to authenticated state when a retry succeeds', async () => {
+      vi.useFakeTimers();
+      try {
+        jwtService.getToken.mockReturnValue('stored-token');
+        flushUserError(500, 'Server Error');
+        vi.advanceTimersByTime(2000);
+        const retryRequests = httpMock.match('/user');
+        expect(retryRequests.length).toBe(1);
+        retryRequests[0].flush({ user: mockUser });
+      } finally {
+        vi.useRealTimers();
+      }
+      const state = await firstValueFrom(service.authState);
+      expect(state).toBe('authenticated');
+      expect(jwtService.saveToken).toHaveBeenCalledWith(mockUser.token);
+    });
+  });
+
+  describe('getCurrentUserSync', () => {
+    it('should return null when no user is set', () => {
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+
+    it('should return the current user after setAuth', () => {
+      service.setAuth(mockUser);
+      expect(service.getCurrentUserSync()).toEqual(mockUser);
+    });
+
+    it('should return null after purgeAuth', () => {
+      service.setAuth(mockUser);
+      service.purgeAuth();
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+  });
+
   describe('Integration scenarios', () => {
     it('should handle complete authentication flow', async () => {
       const credentials = { email: 'test@example.com', password: 'password123' };

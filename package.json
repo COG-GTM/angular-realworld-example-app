@@ -56,6 +56,9 @@
     "typescript": "~5.9.3",
     "vitest": "^4.0.18"
   },
+  "overrides": {
+    "minimatch": "10.2.1"
+  },
   "lint-staged": {
     "*.{ts,html,css,json,md}": "prettier --write"
   }

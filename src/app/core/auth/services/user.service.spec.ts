@@ -1,12 +1,10 @@
-import 'zone.js';
-import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { UserService } from './user.service';
+import { AuthState, UserService } from './user.service';
 import { JwtService } from './jwt.service';
 import { User } from '../user.model';
 
@@ -360,6 +358,230 @@ describe('UserService', () => {
       await updatePromise;
       const stillAuth = await firstValueFrom(service.isAuthenticated);
       expect(stillAuth).toBe(true);
+    });
+  });
+
+  describe('authState', () => {
+    const collectStates = () => {
+      const states: AuthState[] = [];
+      const sub = service.authState.subscribe(state => states.push(state));
+      return { states, sub };
+    };
+
+    it("should start in 'loading'", async () => {
+      expect(await firstValueFrom(service.authState)).toBe('loading');
+    });
+
+    it("should move to 'authenticated' on setAuth and 'unauthenticated' on purgeAuth", () => {
+      const { states, sub } = collectStates();
+      service.setAuth(mockUser);
+      service.purgeAuth();
+      expect(states).toEqual(['loading', 'authenticated', 'unauthenticated']);
+      sub.unsubscribe();
+    });
+
+    it("should stay 'loading' when login fails", async () => {
+      const { states, sub } = collectStates();
+      const promise = firstValueFrom(service.login({ email: 'test@example.com', password: 'wrong' }));
+      httpMock
+        .expectOne('/users/login')
+        .flush({ errors: { 'email or password': ['is invalid'] } }, { status: 403, statusText: 'Forbidden' });
+      await expect(promise).rejects.toMatchObject({ status: 403 });
+      expect(states).toEqual(['loading']);
+      sub.unsubscribe();
+    });
+  });
+
+  describe('getCurrentUserSync', () => {
+    it('should return null before authentication', () => {
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+
+    it('should return the user after setAuth and null after purgeAuth', () => {
+      service.setAuth(mockUser);
+      expect(service.getCurrentUserSync()).toEqual(mockUser);
+      service.purgeAuth();
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+  });
+
+  describe('login/register error side effects', () => {
+    it('should not save a token or set a user when login fails', async () => {
+      const promise = firstValueFrom(service.login({ email: 'test@example.com', password: 'wrong' }));
+      httpMock.expectOne('/users/login').flush('Invalid credentials', { status: 401, statusText: 'Unauthorized' });
+      await expect(promise).rejects.toMatchObject({ status: 401 });
+      expect(jwtService.saveToken).not.toHaveBeenCalled();
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+
+    it('should surface validation errors body when register fails', async () => {
+      const errors = { errors: { username: ['has already been taken'] } };
+      const promise = firstValueFrom(
+        service.register({ username: 'existing', email: 'existing@example.com', password: 'password123' }),
+      );
+      httpMock.expectOne('/users').flush(errors, { status: 422, statusText: 'Unprocessable Entity' });
+      await expect(promise).rejects.toMatchObject({ status: 422, error: errors });
+      expect(jwtService.saveToken).not.toHaveBeenCalled();
+      expect(service.getCurrentUserSync()).toBeNull();
+    });
+
+    it('should propagate network errors from login', async () => {
+      const promise = firstValueFrom(service.login({ email: 'test@example.com', password: 'password123' }));
+      httpMock.expectOne('/users/login').error(new ProgressEvent('error'));
+      await expect(promise).rejects.toMatchObject({ status: 0 });
+      expect(jwtService.saveToken).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('update error side effects', () => {
+    it('should keep the current user unchanged when update fails', async () => {
+      service.setAuth(mockUser);
+      const promise = firstValueFrom(service.update({ bio: 'New bio' }));
+      httpMock.expectOne('/user').flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+      await expect(promise).rejects.toMatchObject({ status: 500 });
+      expect(service.getCurrentUserSync()).toEqual(mockUser);
+    });
+  });
+
+  describe('getCurrentUser error handling', () => {
+    const failCurrentUser = (status: number) => {
+      const complete = vi.fn();
+      const error = vi.fn();
+      service.getCurrentUser().subscribe({ complete, error });
+      const req = httpMock.expectOne('/user');
+      if (status === 0) {
+        req.error(new ProgressEvent('error'));
+      } else {
+        req.flush('error', { status, statusText: 'Error' });
+      }
+      return { complete, error };
+    };
+
+    it.each([400, 401, 403, 404])('should purge auth on %i without retrying', async status => {
+      vi.useFakeTimers();
+      jwtService.getToken.mockReturnValue('stored-token');
+      const { complete, error } = failCurrentUser(status);
+
+      expect(complete).toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+      expect(jwtService.destroyToken).toHaveBeenCalled();
+      expect(await firstValueFrom(service.authState)).toBe('unauthenticated');
+
+      vi.advanceTimersByTime(60_000);
+      httpMock.expectNone('/user');
+      vi.useRealTimers();
+    });
+
+    it.each([0, 500, 503])("should keep the token and become 'unavailable' on status %i", async status => {
+      jwtService.getToken.mockReturnValue(undefined);
+      const { complete, error } = failCurrentUser(status);
+
+      expect(complete).toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+      expect(jwtService.destroyToken).not.toHaveBeenCalled();
+      expect(service.getCurrentUserSync()).toBeNull();
+      expect(await firstValueFrom(service.authState)).toBe('unavailable');
+    });
+  });
+
+  describe('auto-retry while unavailable', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      jwtService.getToken.mockReturnValue('stored-token');
+    });
+
+    afterEach(() => {
+      service.purgeAuth();
+      vi.useRealTimers();
+    });
+
+    const failWith500 = () =>
+      httpMock.expectOne('/user').flush('error', { status: 500, statusText: 'Internal Server Error' });
+
+    it('should retry with exponential backoff capped at 16s', () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+
+      for (const delayMs of [2000, 4000, 8000, 16000, 16000]) {
+        vi.advanceTimersByTime(delayMs - 1);
+        httpMock.expectNone('/user');
+        vi.advanceTimersByTime(1);
+        failWith500();
+      }
+    });
+
+    it("should go through 'loading' and become 'authenticated' when a retry succeeds", () => {
+      const states: AuthState[] = [];
+      const sub = service.authState.subscribe(state => states.push(state));
+
+      service.getCurrentUser().subscribe();
+      failWith500();
+      vi.advanceTimersByTime(2000);
+      httpMock.expectOne('/user').flush({ user: mockUser });
+
+      expect(states).toEqual(['loading', 'unavailable', 'loading', 'authenticated']);
+      expect(service.getCurrentUserSync()).toEqual(mockUser);
+      sub.unsubscribe();
+    });
+
+    it('should reset the backoff after a successful retry', () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+      vi.advanceTimersByTime(2000);
+      failWith500();
+      vi.advanceTimersByTime(4000);
+      httpMock.expectOne('/user').flush({ user: mockUser });
+
+      service.getCurrentUser().subscribe();
+      failWith500();
+      vi.advanceTimersByTime(2000);
+      failWith500();
+    });
+
+    it('should purge auth if a retry returns a 4XX', async () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+      vi.advanceTimersByTime(2000);
+      httpMock.expectOne('/user').flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+
+      expect(jwtService.destroyToken).toHaveBeenCalled();
+      expect(await firstValueFrom(service.authState)).toBe('unauthenticated');
+      vi.advanceTimersByTime(60_000);
+      httpMock.expectNone('/user');
+    });
+
+    it('should not schedule a retry when there is no stored token', () => {
+      jwtService.getToken.mockReturnValue(undefined);
+      service.getCurrentUser().subscribe();
+      failWith500();
+      vi.advanceTimersByTime(60_000);
+      httpMock.expectNone('/user');
+    });
+
+    it('should skip the retry if the token is removed before it fires', async () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+      jwtService.getToken.mockReturnValue(undefined);
+      vi.advanceTimersByTime(2000);
+      httpMock.expectNone('/user');
+      expect(await firstValueFrom(service.authState)).toBe('unavailable');
+    });
+
+    it('should cancel a pending retry on logout', () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+      service.logout();
+      vi.advanceTimersByTime(60_000);
+      httpMock.expectNone('/user');
+    });
+
+    it('should cancel a pending retry when the user logs in', () => {
+      service.getCurrentUser().subscribe();
+      failWith500();
+      service.login({ email: 'test@example.com', password: 'password123' }).subscribe();
+      httpMock.expectOne('/users/login').flush({ user: mockUser });
+      vi.advanceTimersByTime(60_000);
+      httpMock.expectNone('/user');
     });
   });
 });

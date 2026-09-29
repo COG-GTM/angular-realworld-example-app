@@ -1,10 +1,8 @@
-import 'zone.js';
-import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { ArticlesService } from './articles.service';
 import { Article } from '../models/article.model';
 import { ArticleListConfig } from '../models/article-list-config.model';
@@ -261,6 +259,122 @@ describe('ArticlesService', () => {
       req.flush(null);
       await promise;
       expect(true).toBe(true);
+    });
+  });
+
+  describe('request shape edge cases', () => {
+    it('should send no query params when filters are empty', () => {
+      service.query({ type: 'all', filters: {} }).subscribe();
+      const req = httpMock.expectOne('/articles');
+      expect(req.request.params.keys()).toEqual([]);
+      req.flush({ articles: [], articlesCount: 0 });
+    });
+
+    it('should pass filters to the feed endpoint', () => {
+      service.query({ type: 'feed', filters: { limit: 10, offset: 10 } }).subscribe();
+      const req = httpMock.expectOne(
+        r => r.url === '/articles/feed' && r.params.get('limit') === '10' && r.params.get('offset') === '10',
+      );
+      req.flush({ articles: [], articlesCount: 0 });
+    });
+
+    it('should send the favorited filter', () => {
+      service.query({ type: 'all', filters: { favorited: 'testuser' } }).subscribe();
+      const req = httpMock.expectOne(r => r.url === '/articles' && r.params.get('favorited') === 'testuser');
+      req.flush({ articles: [], articlesCount: 0 });
+    });
+
+    it('should unwrap the article envelope on update, favorite and create', async () => {
+      const updated = firstValueFrom(service.update({ slug: 'test-article', body: 'new' }));
+      httpMock.expectOne('/articles/test-article').flush({ article: mockArticle });
+      expect(await updated).toEqual(mockArticle);
+
+      const favorited = firstValueFrom(service.favorite('test-article'));
+      httpMock.expectOne('/articles/test-article/favorite').flush({ article: mockArticle });
+      expect(await favorited).toEqual(mockArticle);
+
+      const created = firstValueFrom(service.create({ title: 'Test Article' }));
+      httpMock.expectOne('/articles/').flush({ article: mockArticle });
+      expect(await created).toEqual(mockArticle);
+    });
+  });
+
+  describe('error paths', () => {
+    type Call = {
+      name: string;
+      call: () => Observable<unknown>;
+      url: string;
+      method: string;
+    };
+
+    const calls: Call[] = [
+      { name: 'query (all)', call: () => service.query({ type: 'all', filters: {} }), url: '/articles', method: 'GET' },
+      {
+        name: 'query (feed)',
+        call: () => service.query({ type: 'feed', filters: {} }),
+        url: '/articles/feed',
+        method: 'GET',
+      },
+      { name: 'get', call: () => service.get('test-article'), url: '/articles/test-article', method: 'GET' },
+      { name: 'delete', call: () => service.delete('test-article'), url: '/articles/test-article', method: 'DELETE' },
+      { name: 'create', call: () => service.create({ title: 'New' }), url: '/articles/', method: 'POST' },
+      {
+        name: 'update',
+        call: () => service.update({ slug: 'test-article', title: 'New' }),
+        url: '/articles/test-article',
+        method: 'PUT',
+      },
+      {
+        name: 'favorite',
+        call: () => service.favorite('test-article'),
+        url: '/articles/test-article/favorite',
+        method: 'POST',
+      },
+      {
+        name: 'unfavorite',
+        call: () => service.unfavorite('test-article'),
+        url: '/articles/test-article/favorite',
+        method: 'DELETE',
+      },
+    ];
+
+    const statuses: [number, string][] = [
+      [401, 'Unauthorized'],
+      [403, 'Forbidden'],
+      [404, 'Not Found'],
+      [500, 'Internal Server Error'],
+    ];
+
+    const cases = calls.flatMap(c => statuses.map(([status, statusText]) => ({ ...c, status, statusText })));
+
+    it.each(cases)('$name should propagate a $status error', async ({ call, url, method, status, statusText }) => {
+      const promise = firstValueFrom(call());
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe(method);
+      req.flush({ errors: { body: [statusText] } }, { status, statusText });
+      await expect(promise).rejects.toMatchObject({ status, statusText, error: { errors: { body: [statusText] } } });
+    });
+
+    it.each(calls)('$name should propagate a network error', async ({ call, url }) => {
+      const promise = firstValueFrom(call());
+      httpMock.expectOne(url).error(new ProgressEvent('error'));
+      await expect(promise).rejects.toMatchObject({ status: 0 });
+    });
+
+    it('should surface 422 validation errors from update', async () => {
+      const errors = { errors: { title: ["can't be blank"] } };
+      const promise = firstValueFrom(service.update({ slug: 'test-article', title: '' }));
+      httpMock.expectOne('/articles/test-article').flush(errors, { status: 422, statusText: 'Unprocessable Entity' });
+      await expect(promise).rejects.toMatchObject({ status: 422, error: errors });
+    });
+
+    it('should not emit a value when a request fails', async () => {
+      const next = vi.fn();
+      const error = vi.fn();
+      service.get('missing').subscribe({ next, error });
+      httpMock.expectOne('/articles/missing').flush('Not found', { status: 404, statusText: 'Not Found' });
+      expect(next).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledTimes(1);
     });
   });
 });

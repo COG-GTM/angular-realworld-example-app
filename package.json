@@ -7,6 +7,7 @@
     "setup": "git submodule init && git submodule update && bun install",
     "start": "ng serve",
     "build": "ng build",
+    "build:report": "ng build --stats-json && node scripts/bundle-report.mjs",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",

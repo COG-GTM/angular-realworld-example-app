@@ -17,6 +17,7 @@ import { Comment } from '../../models/comment.model';
 import { IfAuthenticatedDirective } from '../../../../core/auth/if-authenticated.directive';
 import { Errors } from '../../../../core/models/errors.model';
 import { Profile } from '../../../profile/models/profile.model';
+import { ErrorNotifier } from '../../../../core/errors/error-notifier.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FavoriteButtonComponent } from '../../components/favorite-button.component';
 import { FollowButtonComponent } from '../../../profile/components/follow-button.component';
@@ -47,8 +48,7 @@ export default class ArticleComponent implements OnInit {
   currentUser = signal<User | null>(null);
   comments = signal<Comment[]>([]);
   canModify = signal(false);
-  errors = signal<Errors | null>(null);
-
+  loadError = signal<string | null>(null);
   commentControl = new FormControl<string>('', { nonNullable: true });
   commentFormErrors = signal<Errors | null>(null);
   deleteCommentErrors = signal<Errors | null>(null);
@@ -56,6 +56,7 @@ export default class ArticleComponent implements OnInit {
   isSubmitting = signal(false);
   isDeleting = signal(false);
   destroyRef = inject(DestroyRef);
+  private readonly errorNotifier = inject(ErrorNotifier);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -70,7 +71,7 @@ export default class ArticleComponent implements OnInit {
     combineLatest([this.articleService.get(slug), this.commentsService.getAll(slug), this.userService.currentUser])
       .pipe(
         catchError(err => {
-          this.errors.set(err.errors || { error: ['Failed to load article'] });
+          this.loadError.set(err?.status === 404 ? 'Article not found.' : 'This article could not be loaded.');
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -113,8 +114,14 @@ export default class ArticleComponent implements OnInit {
     this.articleService
       .delete(article.slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        void this.router.navigate(['/']);
+      .subscribe({
+        next: () => {
+          void this.router.navigate(['/']);
+        },
+        error: err => {
+          this.isDeleting.set(false);
+          this.errorNotifier.notify(err);
+        },
       });
   }
 

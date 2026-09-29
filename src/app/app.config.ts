@@ -1,4 +1,11 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  ErrorHandler,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -8,6 +15,7 @@ import { UserService, AuthState } from './core/auth/services/user.service';
 import { apiInterceptor } from './core/interceptors/api.interceptor';
 import { tokenInterceptor } from './core/interceptors/token.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { GlobalErrorHandler } from './core/errors/global-error-handler';
 import { EMPTY } from 'rxjs';
 import { User } from './core/auth/user.model';
 
@@ -69,6 +77,8 @@ export function initAuth(jwtService: JwtService, userService: UserService) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
+    provideBrowserGlobalErrorListeners(),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideRouter(routes),
     provideHttpClient(withInterceptors([apiInterceptor, tokenInterceptor, errorInterceptor])),
     provideAppInitializer(() => {

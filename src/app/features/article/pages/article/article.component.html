@@ -1,11 +1,7 @@
 <div class="article-page">
-  @if (errors()) {
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <app-list-errors [errors]="errors()" />
-        </div>
-      </div>
+  @if (loadError(); as message) {
+    <div class="container page">
+      <p class="load-error">{{ message }}</p>
     </div>
   }
   @if (article(); as a) {

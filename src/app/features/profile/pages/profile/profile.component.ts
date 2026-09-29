@@ -7,28 +7,18 @@ import { Profile } from '../../models/profile.model';
 import { ProfileService } from '../../services/profile.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FollowButtonComponent } from '../../components/follow-button.component';
-import { Errors } from '../../../../core/models/errors.model';
-import { ListErrorsComponent } from '../../../../shared/components/list-errors.component';
 import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile.component.html',
-  imports: [
-    FollowButtonComponent,
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet,
-    FollowButtonComponent,
-    ListErrorsComponent,
-    DefaultImagePipe,
-  ],
+  imports: [FollowButtonComponent, RouterLink, RouterLinkActive, RouterOutlet, FollowButtonComponent, DefaultImagePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
   profile = signal<Profile | null>(null);
   isUser = signal(false);
-  errors = signal<Errors | null>(null);
+  loadError = signal<string | null>(null);
   destroyRef = inject(DestroyRef);
 
   constructor(
@@ -43,7 +33,7 @@ export class ProfileComponent implements OnInit {
       .get(this.route.snapshot.params['username'])
       .pipe(
         catchError(error => {
-          this.errors.set(error.errors || { error: ['Failed to load profile'] });
+          this.loadError.set(error?.status === 404 ? 'Profile not found.' : 'This profile could not be loaded.');
           return EMPTY;
         }),
         switchMap(profile => {

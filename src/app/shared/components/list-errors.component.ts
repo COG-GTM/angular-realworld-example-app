@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Errors } from '../../core/models/errors.model';
+import { formatErrors } from '../../core/errors/error-messages';
 
 @Component({
   selector: 'app-list-errors',
@@ -10,6 +11,6 @@ export class ListErrorsComponent {
   errorList: string[] = [];
 
   @Input() set errors(errorList: Errors | null) {
-    this.errorList = errorList ? Object.keys(errorList.errors || {}).map(key => `${key} ${errorList.errors[key]}`) : [];
+    this.errorList = formatErrors(errorList);
   }
 }

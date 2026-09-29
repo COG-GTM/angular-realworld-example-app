@@ -16,6 +16,7 @@ import { UserService } from '../../../core/auth/services/user.service';
 import { Profile } from '../models/profile.model';
 import { NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ErrorNotifier } from '../../../core/errors/error-notifier.service';
 
 @Component({
   selector: 'app-follow-button',
@@ -42,6 +43,7 @@ export class FollowButtonComponent {
   @Output() toggle = new EventEmitter<Profile>();
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
+  private readonly errorNotifier = inject(ErrorNotifier);
 
   constructor(
     private readonly profileService: ProfileService,
@@ -73,8 +75,9 @@ export class FollowButtonComponent {
           this.isSubmitting.set(false);
           this.toggle.emit(profile);
         },
-        error: () => {
+        error: err => {
           this.isSubmitting.set(false);
+          this.errorNotifier.notify(err);
         },
       });
   }

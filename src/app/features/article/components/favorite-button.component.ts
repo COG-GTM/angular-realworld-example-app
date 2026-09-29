@@ -15,6 +15,7 @@ import { ArticlesService } from '../services/articles.service';
 import { UserService } from '../../../core/auth/services/user.service';
 import { Article } from '../models/article.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ErrorNotifier } from '../../../core/errors/error-notifier.service';
 
 @Component({
   selector: 'app-favorite-button',
@@ -36,6 +37,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class FavoriteButtonComponent {
   destroyRef = inject(DestroyRef);
+  private readonly errorNotifier = inject(ErrorNotifier);
   isSubmitting = signal(false);
 
   @Input() article!: Article;
@@ -71,8 +73,9 @@ export class FavoriteButtonComponent {
           this.isSubmitting.set(false);
           this.toggle.emit(!this.article.favorited);
         },
-        error: () => {
+        error: err => {
           this.isSubmitting.set(false);
+          this.errorNotifier.notify(err);
         },
       });
   }

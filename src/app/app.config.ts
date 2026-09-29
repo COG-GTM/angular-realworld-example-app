@@ -31,16 +31,10 @@ declare global {
  * Sets up the debug interface on window.__conduit_debug__
  */
 function setupDebugInterface(jwtService: JwtService, userService: UserService): void {
-  let currentAuthState: AuthState = 'loading';
-  let currentUser: User | null = null;
-
-  userService.authState.subscribe(state => (currentAuthState = state));
-  userService.currentUser.subscribe(user => (currentUser = user));
-
   window.__conduit_debug__ = {
     getToken: () => jwtService.getToken(),
-    getAuthState: () => currentAuthState,
-    getCurrentUser: () => currentUser,
+    getAuthState: () => userService.authStatus(),
+    getCurrentUser: () => userService.user(),
   };
 }
 

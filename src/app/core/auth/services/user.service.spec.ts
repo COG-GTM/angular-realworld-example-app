@@ -67,7 +67,9 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       service.setAuth(mockUser);
+      TestBed.tick();
       service.setAuth(mockUser); // Should not emit again
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions).toEqual([null, mockUser]);
@@ -86,7 +88,9 @@ describe('UserService', () => {
       const sub = service.isAuthenticated.subscribe(isAuth => {
         emissions.push(isAuth);
       });
+      TestBed.tick();
       service.setAuth(mockUser);
+      TestBed.tick();
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions.length).toBe(2);
       expect(emissions[0]).toBe(false);
@@ -120,10 +124,12 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       const promise = firstValueFrom(service.login(credentials));
       const req = httpMock.expectOne('/users/login');
       req.flush({ user: mockUser });
       await promise;
+      TestBed.tick();
       expect(emissions.length).toBe(2);
       expect(emissions[1]).toEqual(mockUser);
       sub.unsubscribe();
@@ -196,8 +202,10 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       // First set a user
       service.setAuth(mockUser);
+      TestBed.tick();
       service.logout();
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions.length).toBe(3);
@@ -266,10 +274,12 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       const promise = firstValueFrom(service.update(updates));
       const req = httpMock.expectOne('/user');
       req.flush({ user: updatedUser });
       await promise;
+      TestBed.tick();
       expect(emissions.length).toBe(2);
       expect(emissions[1]).toEqual(updatedUser);
       sub.unsubscribe();
@@ -296,7 +306,9 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       service.setAuth(mockUser);
+      TestBed.tick();
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions.length).toBe(2);
       expect(emissions[1]).toEqual(mockUser);
@@ -315,8 +327,10 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       // First set a user
       service.setAuth(mockUser);
+      TestBed.tick();
       service.purgeAuth();
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions.length).toBe(3);
@@ -332,14 +346,17 @@ describe('UserService', () => {
       const sub = service.currentUser.subscribe(user => {
         emissions.push(user);
       });
+      TestBed.tick();
       // Login
       const promise = firstValueFrom(service.login(credentials));
       const req = httpMock.expectOne('/users/login');
       req.flush({ user: mockUser });
       await promise;
+      TestBed.tick();
       expect(emissions[1]).toEqual(mockUser);
       // Logout
       service.logout();
+      TestBed.tick();
       await new Promise(resolve => setTimeout(resolve, 10));
       expect(emissions[2]).toBeNull();
       sub.unsubscribe();

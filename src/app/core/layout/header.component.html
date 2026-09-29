@@ -2,7 +2,7 @@
   <div class="container">
     <a class="navbar-brand" routerLink="/"><img src="assets/conduit-logo.svg" alt="Conduit" class="navbar-logo" /></a>
 
-    @if (authState$ | async; as authState) {
+    @if (authState(); as authState) {
       <!-- Show this for logged out users -->
       @if (authState === 'unauthenticated') {
         <ul class="nav navbar-nav pull-xs-right">
@@ -41,7 +41,7 @@
             </a>
           </li>
 
-          @if (currentUser$ | async; as currentUser) {
+          @if (currentUser(); as currentUser) {
             <li class="nav-item">
               <a class="nav-link" [routerLink]="['/profile', currentUser.username]" routerLinkActive="active">
                 <img [src]="currentUser.image | defaultImage" class="user-pic" />

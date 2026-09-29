@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, EMPTY, Subscription, timer } from 'rxjs';
+import { computed, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Observable, EMPTY, Subscription, timer } from 'rxjs';
 
 import { JwtService } from './jwt.service';
-import { map, distinctUntilChanged, tap, shareReplay, catchError } from 'rxjs/operators';
+import { tap, shareReplay, catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { User } from '../user.model';
 import { Router } from '@angular/router';
@@ -39,6 +40,12 @@ export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'l
  * backoff: 2s → 4s → 8s → 16s → 16s → ... (capped at 16s, retries indefinitely).
  * The UI shows "Connecting..." while retrying. User can also just reload the page.
  *
+ * ## State
+ *
+ * State is held in signals (`user`, `authStatus`, `authenticated`). The
+ * `currentUser`, `authState` and `isAuthenticated` observables are derived from
+ * them for RxJS consumers.
+ *
  * ## Global 401 Handling
  *
  * For other endpoints (not /user), 401 errors are caught by errorInterceptor
@@ -46,20 +53,23 @@ export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'l
  */
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
+  private readonly userState = signal<User | null>(null);
+  private readonly authStatusState = signal<AuthState>('loading');
 
-  private authStateSubject = new BehaviorSubject<AuthState>('loading');
-  public authState = this.authStateSubject.asObservable().pipe(distinctUntilChanged());
+  readonly user = this.userState.asReadonly();
+  readonly authStatus = this.authStatusState.asReadonly();
+  readonly authenticated = computed(() => !!this.userState());
 
-  public isAuthenticated = this.currentUser.pipe(map(user => !!user));
+  readonly currentUser: Observable<User | null> = toObservable(this.user);
+  readonly authState: Observable<AuthState> = toObservable(this.authStatus);
+  readonly isAuthenticated: Observable<boolean> = toObservable(this.authenticated);
 
   /**
    * Synchronously get the current cached user value.
    * Returns null if not authenticated or still loading.
    */
   getCurrentUserSync(): User | null {
-    return this.currentUserSubject.getValue();
+    return this.userState();
   }
 
   private retryAttempt = 0;
@@ -118,8 +128,8 @@ export class UserService {
    * Set auth state to unavailable (server error, but keep token for retry)
    */
   private setAuthUnavailable(): void {
-    this.currentUserSubject.next(null);
-    this.authStateSubject.next('unavailable');
+    this.userState.set(null);
+    this.authStatusState.set('unavailable');
     this.scheduleRetry();
   }
 
@@ -139,7 +149,7 @@ export class UserService {
 
     this.retrySubscription = timer(delaySeconds * 1000).subscribe(() => {
       if (this.jwtService.getToken()) {
-        this.authStateSubject.next('loading');
+        this.authStatusState.set('loading');
         this.getCurrentUser().subscribe();
       }
     });
@@ -158,7 +168,7 @@ export class UserService {
   update(user: Partial<User>): Observable<{ user: User }> {
     return this.http.put<{ user: User }>('/user', { user }).pipe(
       tap(({ user }) => {
-        this.currentUserSubject.next(user);
+        this.userState.set(user);
       }),
     );
   }
@@ -167,15 +177,15 @@ export class UserService {
     this.cancelRetry();
     this.retryAttempt = 0;
     this.jwtService.saveToken(user.token);
-    this.currentUserSubject.next(user);
-    this.authStateSubject.next('authenticated');
+    this.userState.set(user);
+    this.authStatusState.set('authenticated');
   }
 
   purgeAuth(): void {
     this.cancelRetry();
     this.retryAttempt = 0;
     this.jwtService.destroyToken();
-    this.currentUserSubject.next(null);
-    this.authStateSubject.next('unauthenticated');
+    this.userState.set(null);
+    this.authStatusState.set('unauthenticated');
   }
 }

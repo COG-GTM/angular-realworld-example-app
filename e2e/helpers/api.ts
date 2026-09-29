@@ -1,4 +1,4 @@
-import { APIRequestContext } from '@playwright/test';
+import { APIRequestContext, expect } from '@playwright/test';
 
 const API_BASE = 'https://api.realworld.show/api';
 
@@ -104,4 +104,43 @@ export async function createManyArticles(
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   return slugs;
+}
+
+export async function getCurrentUsernameViaAPI(request: APIRequestContext, token: string): Promise<string | null> {
+  const response = await request.get(`${API_BASE}/user`, { headers: { Authorization: `Token ${token}` } });
+  if (!response.ok()) return null;
+  const data = await response.json();
+  return data.user.username;
+}
+
+/**
+ * Registers a user and returns a token that is confirmed to belong to them.
+ *
+ * The shared demo API can hand out the same token to requests issued within
+ * the same second (the latest one wins), so a token is only returned once
+ * GET /user resolves it to the expected username.
+ */
+export async function registerVerifiedUserViaAPI(request: APIRequestContext, user: UserCredentials): Promise<string> {
+  let token = await registerUserViaAPI(request, user);
+  await expect(async () => {
+    if ((await getCurrentUsernameViaAPI(request, token)) !== user.username) {
+      token = await loginUserViaAPI(request, user.email, user.password);
+    }
+    expect(await getCurrentUsernameViaAPI(request, token)).toBe(user.username);
+  }).toPass({ intervals: [250, 500, 1000], timeout: 10_000 });
+  return token;
+}
+
+export async function getArticleViaAPI(request: APIRequestContext, slug: string, token?: string) {
+  return request.get(`${API_BASE}/articles/${slug}`, {
+    headers: token ? { Authorization: `Token ${token}` } : {},
+  });
+}
+
+export async function getArticleStatusViaAPI(
+  request: APIRequestContext,
+  slug: string,
+  token?: string,
+): Promise<number> {
+  return (await getArticleViaAPI(request, slug, token)).status();
 }

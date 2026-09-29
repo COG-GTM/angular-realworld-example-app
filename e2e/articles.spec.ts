@@ -16,18 +16,6 @@ test.describe('Articles', () => {
     await register(page, user.username, user.email, user.password);
   });
 
-  test.afterEach(async ({ context }) => {
-    // Close the browser context to ensure complete isolation between tests.
-    // This releases browser instances, network connections, and other resources.
-    await context.close();
-    // Wait 500ms to allow async cleanup operations to complete.
-    // Without this delay, running 6+ tests in sequence causes flaky failures
-    // due to resource exhaustion (network connections, file descriptors, etc).
-    // This timing issue manifests as timeouts when loading article pages.
-    // This will be investigated and fixed later.
-    await new Promise(resolve => setTimeout(resolve, 500));
-  });
-
   test('should create a new article', async ({ page }) => {
     const article = generateUniqueArticle();
 
@@ -139,7 +127,7 @@ test.describe('Articles', () => {
     await page.goto('/', { waitUntil: 'load' });
 
     // Wait for articles to load
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
+    await expect(page.locator('.article-preview').first()).toBeVisible({ timeout: 10000 });
 
     // Get the username of the currently logged in user from the navbar
     const currentUsername = await page.locator('nav a[href^="/profile/"]').first().textContent();
@@ -165,7 +153,7 @@ test.describe('Articles', () => {
     await page.waitForURL(/\/article\/.+/);
 
     // Wait for article page to load - should see Favorite button (not Delete button)
-    await page.waitForSelector('button:has-text("Favorite")', { timeout: 10000 });
+    await expect(page.locator('button:has-text("Favorite")').first()).toBeVisible({ timeout: 10000 });
 
     // Favorite it first
     await favoriteArticle(page);
@@ -185,11 +173,8 @@ test.describe('Articles', () => {
     // Go to global feed to see the article we just created
     await page.goto('/', { waitUntil: 'load' });
 
-    // Wait for articles to load
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
-
     // Wait for our specific article to appear
-    await page.waitForSelector(`h1:has-text("${article.title}")`, { timeout: 10000 });
+    await expect(page.locator(`h1:has-text("${article.title}")`).first()).toBeVisible({ timeout: 10000 });
 
     // Click on the article link in the feed (h1 is inside a link)
     await Promise.all([

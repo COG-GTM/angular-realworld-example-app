@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { waitForAuthState } from './debug';
 
 export async function register(page: Page, username: string, email: string, password: string) {
   await page.goto('/register', { waitUntil: 'load' });
@@ -41,6 +42,17 @@ export async function login(page: Page, email: string, password: string) {
     }
     throw error;
   }
+}
+
+/**
+ * Signs in by seeding the app's JWT storage directly, skipping the login form.
+ * Resolves once the app reports an authenticated session.
+ */
+export async function signInWithToken(page: Page, token: string) {
+  await page.goto('/', { waitUntil: 'load' });
+  await page.evaluate(t => localStorage.setItem('jwtToken', t), token);
+  await page.reload({ waitUntil: 'load' });
+  await waitForAuthState(page, 'authenticated', { timeout: 10_000 });
 }
 
 export async function logout(page: Page) {

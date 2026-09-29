@@ -25,7 +25,7 @@ import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent implements OnInit {
+export default class ProfileComponent implements OnInit {
   profile = signal<Profile | null>(null);
   isUser = signal(false);
   errors = signal<Errors | null>(null);

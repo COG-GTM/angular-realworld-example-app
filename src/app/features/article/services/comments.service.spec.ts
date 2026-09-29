@@ -1,9 +1,8 @@
-import 'zone.js';
-import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { CommentsService } from './comments.service';
 import { Comment } from '../models/comment.model';
@@ -40,8 +39,7 @@ describe('CommentsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [CommentsService],
+      providers: [provideHttpClient(), provideHttpClientTesting(), CommentsService],
     });
 
     service = TestBed.inject(CommentsService);

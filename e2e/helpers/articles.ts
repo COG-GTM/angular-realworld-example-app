@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page, Response, expect } from '@playwright/test';
 
 export interface ArticleData {
   title: string;
@@ -60,14 +60,25 @@ export async function deleteArticle(page: Page) {
   await Promise.all([page.waitForURL('/'), page.click('button:has-text("Delete Article")')]);
 }
 
+function isFavoriteResponse(res: Response, method: string) {
+  return /\/articles\/[^/]+\/favorite$/.test(res.url()) && res.request().method() === method;
+}
+
 export async function favoriteArticle(page: Page) {
-  await page.click('button.btn-outline-primary:has-text("Favorite")');
+  // The UI updates optimistically, so also wait for the server to confirm
+  await Promise.all([
+    page.waitForResponse(res => isFavoriteResponse(res, 'POST')),
+    page.click('button.btn-outline-primary:has-text("Favorite")'),
+  ]);
   // Wait for the button to update to "Unfavorite"
   await page.waitForSelector('button.btn-primary:has-text("Unfavorite")');
 }
 
 export async function unfavoriteArticle(page: Page) {
-  await page.click('button.btn-primary:has-text("Unfavorite")');
+  await Promise.all([
+    page.waitForResponse(res => isFavoriteResponse(res, 'DELETE')),
+    page.click('button.btn-primary:has-text("Unfavorite")'),
+  ]);
   // Wait for the button to update back to "Favorite"
   await page.waitForSelector('button.btn-outline-primary:has-text("Favorite")');
 }

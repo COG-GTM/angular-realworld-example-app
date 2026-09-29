@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser } from './helpers/auth';
-import { createArticle, generateUniqueArticle } from './helpers/articles';
+import { createArticle, favoriteArticle, generateUniqueArticle } from './helpers/articles';
 import { followUser, unfollowUser } from './helpers/profile';
 
 test.describe('Social Features', () => {
@@ -118,9 +118,7 @@ test.describe('Social Features', () => {
     // Check if already favorited, if not favorite it
     const isFavorited = (await page.locator('button:has-text("Unfavorite")').count()) > 0;
     if (!isFavorited) {
-      await page.click('button.btn-outline-primary:has-text("Favorite")');
-      // Wait for the favorite to complete
-      await page.waitForSelector('button.btn-primary:has-text("Unfavorite")', { timeout: 10000 });
+      await favoriteArticle(page);
     }
 
     // Go to profile and click Favorited tab

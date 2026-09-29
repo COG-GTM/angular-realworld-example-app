@@ -4,14 +4,24 @@ export async function followUser(page: Page, username: string) {
   await page.goto(`/profile/${username}`, { waitUntil: 'load' });
   // Wait for profile page to load and Follow button to appear
   await page.waitForSelector('button:has-text("Follow")', { timeout: 10000 });
-  await page.click('button:has-text("Follow")');
+  await Promise.all([
+    page.waitForResponse(
+      res => res.url().endsWith(`/profiles/${username}/follow`) && res.request().method() === 'POST',
+    ),
+    page.click('button:has-text("Follow")'),
+  ]);
 }
 
 export async function unfollowUser(page: Page, username: string) {
   await page.goto(`/profile/${username}`, { waitUntil: 'load' });
   // Wait for profile page to load and Unfollow button to appear
   await page.waitForSelector('button:has-text("Unfollow")', { timeout: 10000 });
-  await page.click('button:has-text("Unfollow")');
+  await Promise.all([
+    page.waitForResponse(
+      res => res.url().endsWith(`/profiles/${username}/follow`) && res.request().method() === 'DELETE',
+    ),
+    page.click('button:has-text("Unfollow")'),
+  ]);
 }
 
 export async function updateProfile(

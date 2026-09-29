@@ -41,10 +41,13 @@ export class ArticlePreviewComponent {
   }
 
   toggleFavorite(favorited: boolean): void {
-    this.article.update(article => ({
-      ...article,
-      favorited,
-      favoritesCount: favorited ? article.favoritesCount + 1 : article.favoritesCount - 1,
-    }));
+    this.article.update(article => {
+      if (article.favorited === favorited) return article;
+      return {
+        ...article,
+        favorited,
+        favoritesCount: favorited ? article.favoritesCount + 1 : article.favoritesCount - 1,
+      };
+    });
   }
 }

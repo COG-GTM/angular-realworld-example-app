@@ -85,7 +85,7 @@ export default class ArticleComponent implements OnInit {
 
   onToggleFavorite(favorited: boolean): void {
     this.article.update(article => {
-      if (!article) return article;
+      if (!article || article.favorited === favorited) return article;
       return {
         ...article,
         favorited,

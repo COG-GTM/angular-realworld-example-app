@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  Injector,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -29,9 +40,14 @@ export default class EditorComponent implements OnInit {
   });
   tagField = new FormControl<string>('', { nonNullable: true });
 
+  tagAnnouncement = signal('');
+
   errors = signal<Errors | null>(null);
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
+  private readonly tagInput = viewChild.required<ElementRef<HTMLInputElement>>('tagInput');
+  private readonly errorList = viewChild(ListErrorsComponent);
 
   constructor(
     private readonly articleService: ArticlesService,
@@ -39,6 +55,14 @@ export default class EditorComponent implements OnInit {
     private readonly router: Router,
     private readonly userService: UserService,
   ) {}
+
+  get isEditing(): boolean {
+    return !!this.route.snapshot.params['slug'];
+  }
+
+  hasError(field: string): boolean {
+    return !!this.errors()?.errors?.[field];
+  }
 
   ngOnInit() {
     if (this.route.snapshot.params['slug']) {
@@ -61,6 +85,7 @@ export default class EditorComponent implements OnInit {
     // only add tag if it does not exist yet
     if (tag != null && tag.trim() !== '' && this.tagList().indexOf(tag) < 0) {
       this.tagList.update(tags => [...tags, tag]);
+      this.tagAnnouncement.set(`Tag ${tag} added`);
     }
     // clear the input
     this.tagField.reset('');
@@ -68,6 +93,8 @@ export default class EditorComponent implements OnInit {
 
   removeTag(tagName: string): void {
     this.tagList.update(tags => tags.filter(tag => tag !== tagName));
+    this.tagAnnouncement.set(`Tag ${tagName} removed`);
+    this.tagInput().nativeElement.focus();
   }
 
   submitForm(): void {
@@ -90,6 +117,7 @@ export default class EditorComponent implements OnInit {
       error: err => {
         this.errors.set(err);
         this.isSubmitting.set(false);
+        afterNextRender(() => this.errorList()?.focus(), { injector: this.injector });
       },
     });
   }

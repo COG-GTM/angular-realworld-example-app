@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  Injector,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from '../../core/auth/user.model';
@@ -36,6 +46,8 @@ export default class SettingsComponent implements OnInit {
   errors = signal<Errors | null>(null);
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
+  private readonly errorList = viewChild(ListErrorsComponent);
 
   constructor(
     private readonly router: Router,
@@ -53,6 +65,10 @@ export default class SettingsComponent implements OnInit {
     }
   }
 
+  hasError(field: string): boolean {
+    return !!this.errors()?.errors?.[field];
+  }
+
   logout(): void {
     this.userService.logout();
   }
@@ -68,6 +84,7 @@ export default class SettingsComponent implements OnInit {
         error: err => {
           this.errors.set(err);
           this.isSubmitting.set(false);
+          afterNextRender(() => this.errorList()?.focus(), { injector: this.injector });
         },
       });
   }

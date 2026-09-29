@@ -1,5 +1,5 @@
 @if (errorList) {
-  <ul class="error-messages">
+  <ul class="error-messages" aria-live="assertive" tabindex="-1">
     @for (error of errorList; track error) {
       <li>{{ error }}</li>
     }

@@ -6,56 +6,75 @@
 
         <app-list-errors [errors]="errors()" />
 
-        <form [formGroup]="settingsForm" (ngSubmit)="submitForm()">
+        <form [formGroup]="settingsForm" (ngSubmit)="submitForm()" [attr.aria-busy]="isSubmitting()">
           <fieldset [disabled]="isSubmitting()">
             <fieldset class="form-group">
+              <label class="sr-only" for="settings-image">Profile picture URL</label>
               <input
+                id="settings-image"
                 class="form-control"
                 type="text"
+                inputmode="url"
+                autocomplete="photo"
                 placeholder="URL of profile picture"
                 formControlName="image"
                 name="image"
+                [attr.aria-invalid]="hasError('image') || null"
               />
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="settings-username">Username</label>
               <input
+                id="settings-username"
                 class="form-control form-control-lg"
                 type="text"
+                autocomplete="username"
                 placeholder="Username"
                 formControlName="username"
                 name="username"
+                [attr.aria-invalid]="hasError('username') || null"
               />
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="settings-bio">Bio</label>
               <textarea
+                id="settings-bio"
                 class="form-control form-control-lg"
                 rows="8"
                 placeholder="Short bio about you"
                 formControlName="bio"
                 name="bio"
-              >
-              </textarea>
+                [attr.aria-invalid]="hasError('bio') || null"
+              ></textarea>
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="settings-email">Email</label>
               <input
+                id="settings-email"
                 class="form-control form-control-lg"
                 type="email"
+                autocomplete="email"
                 placeholder="Email"
                 formControlName="email"
                 name="email"
+                [attr.aria-invalid]="hasError('email') || null"
               />
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="settings-password">New password</label>
               <input
+                id="settings-password"
                 class="form-control form-control-lg"
                 type="password"
+                autocomplete="new-password"
                 placeholder="New Password"
                 formControlName="password"
                 name="password"
+                [attr.aria-invalid]="hasError('password') || null"
               />
             </fieldset>
 
@@ -66,7 +85,7 @@
         <!-- Line break for logout button -->
         <hr />
 
-        <button class="btn btn-outline-danger" (click)="logout()">Or click here to logout.</button>
+        <button class="btn btn-outline-danger" type="button" (click)="logout()">Or click here to logout.</button>
       </div>
     </div>
   </div>

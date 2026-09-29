@@ -2,57 +2,80 @@
   <div class="container page">
     <div class="row">
       <div class="col-md-10 offset-md-1 col-xs-12">
+        <h1 class="sr-only">{{ isEditing ? 'Edit article' : 'New article' }}</h1>
+
         <app-list-errors [errors]="errors()" />
 
-        <form [formGroup]="articleForm">
+        <form [formGroup]="articleForm" [attr.aria-busy]="isSubmitting()">
           <fieldset [disabled]="isSubmitting()">
             <fieldset class="form-group">
+              <label class="sr-only" for="editor-title">Article title</label>
               <input
+                id="editor-title"
                 class="form-control form-control-lg"
                 formControlName="title"
                 name="title"
                 type="text"
                 placeholder="Article Title"
+                [attr.aria-invalid]="hasError('title') || null"
               />
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="editor-description">Article description</label>
               <input
+                id="editor-description"
                 class="form-control"
                 formControlName="description"
                 name="description"
                 type="text"
                 placeholder="What's this article about?"
+                [attr.aria-invalid]="hasError('description') || null"
               />
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="editor-body">Article body (markdown)</label>
               <textarea
+                id="editor-body"
                 class="form-control"
                 formControlName="body"
                 name="body"
                 rows="8"
                 placeholder="Write your article (in markdown)"
-              >
-              </textarea>
+                [attr.aria-invalid]="hasError('body') || null"
+              ></textarea>
             </fieldset>
 
             <fieldset class="form-group">
+              <label class="sr-only" for="editor-tags">Tags</label>
               <input
+                #tagInput
+                id="editor-tags"
                 class="form-control"
                 type="text"
                 placeholder="Enter tags"
+                aria-describedby="editor-tags-hint"
                 [formControl]="tagField"
                 (keyup.enter)="addTag()"
               />
-              <div class="tag-list">
+              <p id="editor-tags-hint" class="sr-only">Press Enter to add a tag.</p>
+              <div class="tag-list" role="list" aria-label="Added tags">
                 @for (tag of tagList(); track tag) {
-                  <span class="tag-default tag-pill">
-                    <i class="ion-close-round" (click)="removeTag(tag)"></i>
+                  <span class="tag-default tag-pill" role="listitem">
+                    <button
+                      type="button"
+                      class="tag-remove"
+                      [attr.aria-label]="'Remove tag ' + tag"
+                      (click)="removeTag(tag)"
+                    >
+                      <i class="ion-close-round" aria-hidden="true"></i>
+                    </button>
                     {{ tag }}
                   </span>
                 }
               </div>
+              <p class="sr-only" aria-live="polite">{{ tagAnnouncement() }}</p>
             </fieldset>
 
             <button class="btn btn-lg pull-xs-right btn-primary" type="button" (click)="submitForm()">

@@ -1,13 +1,11 @@
 import { Routes } from '@angular/router';
-import { ProfileComponent } from './pages/profile/profile.component';
-
 const routes: Routes = [
   {
     path: '',
     children: [
       {
         path: ':username',
-        component: ProfileComponent,
+        loadComponent: () => import('./pages/profile/profile.component'),
         children: [
           {
             path: '',

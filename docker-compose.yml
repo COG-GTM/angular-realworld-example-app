@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ${BACKEND_CONTEXT:-../spring-boot-realworld-example-app}
+      args:
+        MAVEN_MIRROR: ${MAVEN_MIRROR:-}
+    volumes:
+      - conduit-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/tags"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build: .
+    environment:
+      BACKEND_URL: http://backend:8080
+    ports:
+      - "${CONDUIT_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  conduit-data:

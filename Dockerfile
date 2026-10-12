@@ -11,7 +11,8 @@ RUN test -f realworld/assets/theme/styles.css \
 RUN bun run build --configuration docker
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine
-ENV BACKEND_URL=http://backend:8080
+ENV BACKEND_URL=http://backend:8080 \
+    NGINX_RESOLVER=127.0.0.11
 COPY docker/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist/angular-conduit/browser /usr/share/nginx/html
 EXPOSE 8080

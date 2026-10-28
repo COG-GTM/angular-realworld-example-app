@@ -263,4 +263,53 @@ describe('ArticlesService', () => {
       expect(true).toBe(true);
     });
   });
+
+  describe('bookmark', () => {
+    it('should POST to the bookmark endpoint and return the article', async () => {
+      const slug = 'article-to-save';
+      const promise = firstValueFrom(service.bookmark(slug));
+      const req = httpMock.expectOne(`/articles/${slug}/bookmark`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({});
+      req.flush({ article: { ...mockArticle, slug, bookmarked: true } });
+      const article = await promise;
+      expect(article.slug).toBe(slug);
+      expect(article.bookmarked).toBe(true);
+    });
+  });
+
+  describe('unbookmark', () => {
+    it('should DELETE the bookmark endpoint and return the article', async () => {
+      const slug = 'article-to-unsave';
+      const promise = firstValueFrom(service.unbookmark(slug));
+      const req = httpMock.expectOne(`/articles/${slug}/bookmark`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush({ article: { ...mockArticle, slug, bookmarked: false } });
+      const article = await promise;
+      expect(article.slug).toBe(slug);
+      expect(article.bookmarked).toBe(false);
+    });
+  });
+
+  describe('queryBookmarked', () => {
+    it('should GET the bookmarked list with limit and offset', async () => {
+      const promise = firstValueFrom(service.queryBookmarked({ limit: 20, offset: 40 }));
+      const req = httpMock.expectOne(r => r.url === '/articles/bookmarked');
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('limit')).toBe('20');
+      expect(req.request.params.get('offset')).toBe('40');
+      const bookmarked = mockArticleList.map(a => ({ ...a, bookmarked: true }));
+      req.flush({ articles: bookmarked, articlesCount: 42 });
+      const response = await promise;
+      expect(response.articles).toEqual(bookmarked);
+      expect(response.articlesCount).toBe(42);
+    });
+
+    it('should omit params when none are given', () => {
+      service.queryBookmarked().subscribe();
+      const req = httpMock.expectOne('/articles/bookmarked');
+      expect(req.request.params.keys()).toEqual([]);
+      req.flush({ articles: [], articlesCount: 0 });
+    });
+  });
 });

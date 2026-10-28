@@ -36,6 +36,8 @@
                 {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
                 <span class="counter">({{ a.favoritesCount }})</span>
               </app-favorite-button>
+
+              <app-bookmark-button [article]="a" (toggle)="onToggleBookmark($event)" />
             </span>
           }
         </app-article-meta>
@@ -83,6 +85,8 @@
                 {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
                 <span class="counter">({{ a.favoritesCount }})</span>
               </app-favorite-button>
+
+              <app-bookmark-button [article]="a" (toggle)="onToggleBookmark($event)" />
             </span>
           }
         </app-article-meta>

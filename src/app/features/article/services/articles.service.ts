@@ -51,4 +51,23 @@ export class ArticlesService {
   unfavorite(slug: string): Observable<void> {
     return this.http.delete<void>(`/articles/${slug}/favorite`);
   }
+
+  bookmark(slug: string): Observable<Article> {
+    return this.http.post<{ article: Article }>(`/articles/${slug}/bookmark`, {}).pipe(map(data => data.article));
+  }
+
+  unbookmark(slug: string): Observable<Article> {
+    return this.http.delete<{ article: Article }>(`/articles/${slug}/bookmark`).pipe(map(data => data.article));
+  }
+
+  queryBookmarked(filters: { limit?: number; offset?: number } = {}): Observable<{
+    articles: Article[];
+    articlesCount: number;
+  }> {
+    let params = new HttpParams();
+    if (filters.limit !== undefined) params = params.set('limit', filters.limit);
+    if (filters.offset !== undefined) params = params.set('offset', filters.offset);
+
+    return this.http.get<{ articles: Article[]; articlesCount: number }>('/articles/bookmarked', { params });
+  }
 }

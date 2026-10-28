@@ -1,0 +1,14 @@
+.article-page .banner {
+  color: #fff;
+  background: #333;
+  border: none;
+}
+
+.article-page .banner h1 {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.article-page .banner ::ng-deep .article-meta .author {
+  color: #fff;
+}

@@ -27,6 +27,7 @@ describe('ArticlesService', () => {
     updatedAt: '2024-01-02',
     favorited: false,
     favoritesCount: 5,
+    bookmarked: false,
     author: {
       username: 'testuser',
       bio: 'Test bio',
@@ -261,6 +262,53 @@ describe('ArticlesService', () => {
       req.flush(null);
       await promise;
       expect(true).toBe(true);
+    });
+  });
+
+  describe('bookmark', () => {
+    it('should POST to the bookmark endpoint and return the viewer-specific article', async () => {
+      const promise = firstValueFrom(service.bookmark('test-article'));
+      const req = httpMock.expectOne('/articles/test-article/bookmark');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({});
+      req.flush({ article: { ...mockArticle, bookmarked: true } });
+      const article = await promise;
+      expect(article.bookmarked).toBe(true);
+      expect(article).not.toHaveProperty('bookmarksCount');
+    });
+
+    it('should propagate 401 errors for unauthenticated requests', async () => {
+      const promise = firstValueFrom(service.bookmark('test-article'));
+      const req = httpMock.expectOne('/articles/test-article/bookmark');
+      req.flush({ errors: { body: ['Unauthorized'] } }, { status: 401, statusText: 'Unauthorized' });
+      await expect(promise).rejects.toMatchObject({ status: 401 });
+    });
+  });
+
+  describe('unbookmark', () => {
+    it('should DELETE the bookmark endpoint and return the article with bookmarked false', async () => {
+      const promise = firstValueFrom(service.unbookmark('test-article'));
+      const req = httpMock.expectOne('/articles/test-article/bookmark');
+      expect(req.request.method).toBe('DELETE');
+      req.flush({ article: { ...mockArticle, bookmarked: false } });
+      const article = await promise;
+      expect(article.bookmarked).toBe(false);
+    });
+  });
+
+  describe('queryBookmarked', () => {
+    it('should GET /articles/bookmarked with limit and offset only', async () => {
+      const promise = firstValueFrom(service.queryBookmarked(10, 20));
+      const req = httpMock.expectOne(request => request.url === '/articles/bookmarked');
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('limit')).toBe('10');
+      expect(req.request.params.get('offset')).toBe('20');
+      expect(req.request.params.keys().sort()).toEqual(['limit', 'offset']);
+      const saved = mockArticleList.map(article => ({ ...article, bookmarked: true }));
+      req.flush({ articles: saved, articlesCount: 22 });
+      const response = await promise;
+      expect(response.articles.map(a => a.slug)).toEqual(['test-article', 'second-article']);
+      expect(response.articlesCount).toBe(22);
     });
   });
 });

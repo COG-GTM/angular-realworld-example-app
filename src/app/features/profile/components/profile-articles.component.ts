@@ -5,6 +5,7 @@ import { ProfileService } from '../services/profile.service';
 import { Profile } from '../models/profile.model';
 import { ArticleListConfig } from '../../article/models/article-list-config.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-profile-articles',
@@ -25,9 +26,11 @@ export default class ProfileArticlesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.profileService
-      .get(this.route.snapshot.params['username'])
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.route.paramMap
+      .pipe(
+        switchMap(params => this.profileService.get(params.get('username')!)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (profile: Profile) => {
           this.profile.set(profile);

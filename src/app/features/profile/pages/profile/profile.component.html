@@ -41,7 +41,7 @@
                   [routerLinkActiveOptions]="{ exact: true }"
                   [routerLink]="['/profile', p.username]"
                 >
-                  My Posts
+                  My Articles
                 </a>
               </li>
               <li class="nav-item">
@@ -51,9 +51,21 @@
                   [routerLinkActiveOptions]="{ exact: true }"
                   [routerLink]="['/profile', p.username, 'favorites']"
                 >
-                  Favorited Posts
+                  Favorited Articles
                 </a>
               </li>
+              @if (isUser()) {
+                <li class="nav-item">
+                  <a
+                    class="nav-link reading-list-tab"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    [routerLink]="['/profile', p.username, 'reading-list']"
+                  >
+                    Reading list
+                  </a>
+                </li>
+              }
             </ul>
           </div>
 

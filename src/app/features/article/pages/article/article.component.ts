@@ -19,18 +19,21 @@ import { Errors } from '../../../../core/models/errors.model';
 import { Profile } from '../../../profile/models/profile.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FavoriteButtonComponent } from '../../components/favorite-button.component';
+import { BookmarkButtonComponent } from '../../components/bookmark-button.component';
 import { FollowButtonComponent } from '../../../profile/components/follow-button.component';
 import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-article-page',
   templateUrl: './article.component.html',
+  styleUrls: ['./article.component.css'],
   imports: [
     ArticleMetaComponent,
     RouterLink,
     NgClass,
     FollowButtonComponent,
     FavoriteButtonComponent,
+    BookmarkButtonComponent,
     MarkdownPipe,
     AsyncPipe,
     ListErrorsComponent,
@@ -92,6 +95,10 @@ export default class ArticleComponent implements OnInit {
         favoritesCount: favorited ? article.favoritesCount + 1 : article.favoritesCount - 1,
       };
     });
+  }
+
+  onToggleBookmark(updated: Article): void {
+    this.article.update(article => (article ? { ...article, bookmarked: updated.bookmarked } : article));
   }
 
   toggleFollowing(profile: Profile): void {

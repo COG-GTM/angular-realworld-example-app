@@ -23,6 +23,11 @@ import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
     ListErrorsComponent,
     DefaultImagePipe,
   ],
+  styles: `
+    .nav-pills.outline-active .nav-link.reading-list-tab.active {
+      color: #f0ad4e;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
@@ -39,12 +44,16 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.profileService
-      .get(this.route.snapshot.params['username'])
+    this.route.paramMap
       .pipe(
-        catchError(error => {
-          this.errors.set(error.errors || { error: ['Failed to load profile'] });
-          return EMPTY;
+        switchMap(params => {
+          this.errors.set(null);
+          return this.profileService.get(params.get('username')!).pipe(
+            catchError(error => {
+              this.errors.set(error.errors || { error: ['Failed to load profile'] });
+              return EMPTY;
+            }),
+          );
         }),
         switchMap(profile => {
           return combineLatest([of(profile), this.userService.currentUser]);

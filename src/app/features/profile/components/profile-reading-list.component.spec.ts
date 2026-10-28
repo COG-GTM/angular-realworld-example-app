@@ -3,7 +3,7 @@ import 'zone.js/testing';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 import { TestBed, getTestBed, ComponentFixture } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import ProfileReadingListComponent from './profile-reading-list.component';
 import { ArticlesService } from '../../article/services/articles.service';
@@ -35,6 +35,8 @@ describe('ProfileReadingListComponent', () => {
 
   let fixture: ComponentFixture<ProfileReadingListComponent>;
   let component: ProfileReadingListComponent;
+  let authState: BehaviorSubject<AuthState>;
+  let currentUser: BehaviorSubject<{ username: string } | null>;
   let articlesService: {
     queryBookmarked: ReturnType<typeof vi.fn>;
     bookmark: ReturnType<typeof vi.fn>;
@@ -54,12 +56,14 @@ describe('ProfileReadingListComponent', () => {
 
   beforeEach(() => {
     articlesService = { queryBookmarked: vi.fn(), bookmark: vi.fn(), unbookmark: vi.fn() };
+    authState = new BehaviorSubject<AuthState>('authenticated');
+    currentUser = new BehaviorSubject<{ username: string } | null>({ username: 'eric' });
     TestBed.configureTestingModule({
       imports: [ProfileReadingListComponent],
       providers: [
         provideRouter([]),
         { provide: ArticlesService, useValue: articlesService },
-        { provide: UserService, useValue: { authState: new BehaviorSubject<AuthState>('authenticated') } },
+        { provide: UserService, useValue: { authState, currentUser } },
       ],
     });
   });
@@ -168,5 +172,32 @@ describe('ProfileReadingListComponent', () => {
     fixture.detectChanges();
     expect(el().querySelector('.reading-list-error')).toBeNull();
     expect(cards()).toEqual(['Article 1']);
+  });
+
+  it('clears the private list and leaves when the viewer logs out while on the route', () => {
+    articlesService.queryBookmarked.mockReturnValue(of({ articles: [makeArticle(1)], articlesCount: 1 }));
+    render();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    expect(cards()).toEqual(['Article 1']);
+
+    currentUser.next(null);
+    authState.next('unauthenticated');
+    fixture.detectChanges();
+
+    expect(cards()).toEqual([]);
+    expect(el().textContent).not.toContain('Article 1');
+    expect(navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('leaves the route when a different account becomes current', () => {
+    articlesService.queryBookmarked.mockReturnValue(of({ articles: [makeArticle(1)], articlesCount: 1 }));
+    render();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    currentUser.next({ username: 'ana' });
+    fixture.detectChanges();
+
+    expect(cards()).toEqual([]);
+    expect(navigate).toHaveBeenCalledWith(['/profile', 'ana']);
   });
 });

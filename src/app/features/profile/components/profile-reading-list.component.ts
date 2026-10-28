@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesService } from '../../article/services/articles.service';
@@ -7,6 +7,8 @@ import { Article } from '../../article/models/article.model';
 import { ArticleMetaComponent } from '../../article/components/article-meta.component';
 import { BookmarkButtonComponent } from '../../article/components/bookmark-button.component';
 import { LoadingState } from '../../../core/models/loading-state.model';
+import { UserService } from '../../../core/auth/services/user.service';
+import { combineLatest, filter } from 'rxjs';
 
 @Component({
   selector: 'app-profile-reading-list',
@@ -69,11 +71,36 @@ export default class ProfileReadingListComponent implements OnInit {
   loadError = signal(false);
   LoadingState = LoadingState;
   destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
   constructor(private readonly articlesService: ArticlesService) {}
 
   ngOnInit(): void {
     this.load();
+    this.leaveWhenOwnerChanges();
+  }
+
+  /** The guard only runs on navigation; drop private data if the viewer logs out or switches account in place. */
+  private leaveWhenOwnerChanges(): void {
+    let owner: string | undefined;
+    combineLatest([this.userService.authState, this.userService.currentUser])
+      .pipe(
+        filter(([state]) => state !== 'loading'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(([state, user]) => {
+        if (state === 'unavailable') return;
+        if (owner === undefined && user) {
+          owner = user.username;
+          return;
+        }
+        if (user?.username === owner) return;
+        this.results.set([]);
+        this.setCount(0);
+        this.loading.set(LoadingState.NOT_LOADED);
+        void this.router.navigate(user ? ['/profile', user.username] : ['/login']);
+      });
   }
 
   setPageTo(pageNumber: number): void {

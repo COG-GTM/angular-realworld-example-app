@@ -14,6 +14,11 @@ import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
 @Component({
   selector: 'app-profile-page',
   templateUrl: './profile.component.html',
+  styles: `
+    .nav-pills.outline-active .nav-link.reading-list-tab.active {
+      color: #f0ad4e;
+    }
+  `,
   imports: [
     FollowButtonComponent,
     RouterLink,

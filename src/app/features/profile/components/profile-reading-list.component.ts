@@ -20,10 +20,10 @@ import { LoadingState } from '../../../core/models/loading-state.model';
       @for (article of results(); track article.slug) {
         <div class="article-preview reading-list-item">
           <div class="article-meta">
-            <div class="info">
+            <span class="reading-list-meta">
               <a class="author" [routerLink]="['/profile', article.author.username]">{{ article.author.username }}</a>
-              <span class="date">· {{ article.createdAt | date: 'MMM d' }}</span>
-            </div>
+              · <span class="date">{{ article.createdAt | date: 'MMM d' }}</span>
+            </span>
             <app-bookmark-button
               class="pull-xs-right"
               [article]="article"
@@ -57,6 +57,15 @@ import { LoadingState } from '../../../core/models/loading-state.model';
   styles: `
     .page-link {
       cursor: pointer;
+    }
+    .reading-list-meta {
+      color: #bbb;
+      font-size: 0.8rem;
+      vertical-align: middle;
+    }
+    .reading-list-meta .author {
+      color: inherit;
+      font-weight: normal;
     }
   `,
   imports: [BookmarkButtonComponent, RouterLink, DatePipe, NgClass],

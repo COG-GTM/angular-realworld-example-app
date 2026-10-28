@@ -39,8 +39,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       background-color: transparent;
       border-color: #f0ad4e;
     }
-    .btn-outline-bookmark:hover,
-    .btn-outline-bookmark:focus {
+    .btn-outline-bookmark:hover {
       color: #fff;
       background-color: #f0ad4e;
       border-color: #f0ad4e;

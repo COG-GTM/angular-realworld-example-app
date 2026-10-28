@@ -170,6 +170,34 @@ describe('ProfileReadingListComponent', () => {
     req.flush({ articles: [], articlesCount: 25 });
   });
 
+  it('moves back to the last valid page when the only card on the last page is un-saved', async () => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/profile/ana/reading-list');
+    httpMock.expectOne(r => r.url === '/articles/bookmarked').flush({ articles: saved, articlesCount: 11 });
+    harness.detectChanges();
+
+    const el = harness.routeNativeElement!;
+    (el.querySelectorAll('.pagination .page-link')[1] as HTMLButtonElement).click();
+    httpMock
+      .expectOne(r => r.url === '/articles/bookmarked' && r.params.get('offset') === '10')
+      .flush({ articles: [saved[1]], articlesCount: 11 });
+    harness.detectChanges();
+
+    (cards(el)[0].querySelector('button') as HTMLButtonElement).click();
+    httpMock
+      .expectOne('/articles/event-driven-payments-with-spring/bookmark')
+      .flush({ article: { ...saved[1], bookmarked: false } });
+
+    const reload = httpMock.expectOne(r => r.url === '/articles/bookmarked');
+    expect(reload.request.params.get('offset')).toBe('0');
+    reload.flush({ articles: [saved[0]], articlesCount: 10 });
+    harness.detectChanges();
+
+    expect(cards(el).length).toBe(1);
+    expect(el.querySelector('.empty-reading-list-message')).toBeNull();
+    expect(el.querySelector('.pagination')).toBeNull();
+  });
+
   it("redirects to the profile and never requests bookmarks on someone else's profile", async () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/profile/eric/reading-list');

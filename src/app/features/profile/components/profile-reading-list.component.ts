@@ -109,6 +109,16 @@ export default class ProfileReadingListComponent implements OnInit {
     if (bookmarked) return;
     this.results.update(articles => articles.filter(item => item.slug !== article.slug));
     this.articlesCount.update(count => Math.max(count - 1, 0));
+    this.totalPages.set(this.pageRange(this.articlesCount()));
+
+    if (this.results().length === 0 && this.articlesCount() > 0) {
+      this.page.set(Math.min(this.page(), this.totalPages().length));
+      this.runQuery();
+    }
+  }
+
+  private pageRange(count: number): number[] {
+    return Array.from({ length: Math.ceil(count / this.limit) }, (_, index) => index + 1);
   }
 
   private runQuery(): void {
@@ -122,9 +132,7 @@ export default class ProfileReadingListComponent implements OnInit {
         this.loading.set(LoadingState.LOADED);
         this.results.set(data.articles);
         this.articlesCount.set(data.articlesCount);
-        this.totalPages.set(
-          Array.from({ length: Math.ceil(data.articlesCount / this.limit) }, (_, index) => index + 1),
-        );
+        this.totalPages.set(this.pageRange(data.articlesCount));
       });
   }
 }

@@ -10,6 +10,8 @@ export class ListErrorsComponent {
   errorList: string[] = [];
 
   @Input() set errors(errorList: Errors | null) {
-    this.errorList = errorList ? Object.keys(errorList.errors || {}).map(key => `${key} ${errorList.errors[key]}`) : [];
+    this.errorList = errorList
+      ? Object.keys(errorList.errors || {}).map(key => `${key} ${errorList.errors[key]}`.trim())
+      : [];
   }
 }

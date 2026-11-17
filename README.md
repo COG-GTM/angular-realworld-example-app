@@ -23,6 +23,16 @@ bun run start
 
 Run `bun run setup` again after a `git pull` that updates the `realworld` submodule.
 
+### Running against a local backend
+
+The API base URL comes from `src/environments/environment.ts` (default `https://api.realworld.show/api`). The `local` configuration swaps in `src/environments/environment.local.ts`, which points at `http://localhost:8080` (for example the [Spring Boot backend](https://github.com/COG-GTM/spring-boot-realworld-example-app) started with `./gradlew bootRun`).
+
+```bash
+bun run seed:local   # optional: users jake/ana/sam (password123), 27 tagged articles, comments, favorites, follows
+bun run start:local  # dev server at localhost:4200 using http://localhost:8080
+API_URL=http://localhost:8080 bun run test:e2e   # e2e suite against the same backend
+```
+
 ### Building the project
 
 Run `bun run build` to build the project. The build artifacts will be stored in the `dist/` directory.

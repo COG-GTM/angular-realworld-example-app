@@ -12,7 +12,7 @@ test.describe('Health Checks', () => {
   });
 
   test('API should be accessible', async ({ page }) => {
-    const tagsUrl = 'https://api.realworld.show/api/tags';
+    const tagsUrl = `${process.env['API_URL'] ?? 'https://api.realworld.show/api'}/tags`;
     const mockTags = { tags: ['angular', 'react', 'vue'] };
     let routeHits = 0;
 

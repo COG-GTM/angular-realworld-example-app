@@ -1,3 +1,3 @@
 export interface Errors {
-  errors: Record<string, string>;
+  errors: Record<string, string | string[]>;
 }

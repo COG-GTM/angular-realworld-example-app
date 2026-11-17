@@ -6,6 +6,8 @@
     "ng": "ng",
     "setup": "git submodule init && git submodule update && bun install",
     "start": "ng serve",
+    "start:local": "ng serve --configuration local",
+    "seed:local": "bun scripts/seed-local.ts",
     "build": "ng build",
     "test": "vitest",
     "test:ui": "vitest --ui",

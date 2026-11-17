@@ -39,12 +39,17 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.profileService
-      .get(this.route.snapshot.params['username'])
+    this.route.paramMap
       .pipe(
-        catchError(error => {
-          this.errors.set(error.errors || { error: ['Failed to load profile'] });
-          return EMPTY;
+        switchMap(params => {
+          this.profile.set(null);
+          this.errors.set(null);
+          return this.profileService.get(params.get('username')!).pipe(
+            catchError(error => {
+              this.errors.set(error.errors || { error: ['Failed to load profile'] });
+              return EMPTY;
+            }),
+          );
         }),
         switchMap(profile => {
           return combineLatest([of(profile), this.userService.currentUser]);

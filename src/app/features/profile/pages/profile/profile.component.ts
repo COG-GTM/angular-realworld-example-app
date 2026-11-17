@@ -46,7 +46,11 @@ export class ProfileComponent implements OnInit {
           this.errors.set(null);
           return this.profileService.get(params.get('username')!).pipe(
             catchError(error => {
-              this.errors.set(error.errors || { error: ['Failed to load profile'] });
+              this.errors.set(
+                error.status === 404
+                  ? { errors: { profile: ['not found'] } }
+                  : { errors: error.errors ?? { profile: ['could not be loaded'] } },
+              );
               return EMPTY;
             }),
           );

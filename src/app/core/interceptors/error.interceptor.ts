@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { UserService } from '../auth/services/user.service';
+import { Errors } from '../models/errors.model';
 
 /**
  * Global HTTP error interceptor.
@@ -27,6 +28,7 @@ import { UserService } from '../auth/services/user.service';
  * Re-throws errors with { ...body, status } format so that:
  * - Components can access err.errors for display (e.g., validation errors)
  * - Auth logic can check err.status for error type decisions
+ * - Bodies without `errors` ({ message } or Spring Problem Details) keep their message
  * - Network errors get a user-friendly fallback message
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -41,14 +43,21 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         userService.purgeAuth();
       }
 
-      // Normalize error format: { errors: {...}, status: number }
-      // Provides fallback message for network errors (status 0) or missing body
-      const body =
-        err.error && typeof err.error === 'object' && 'errors' in err.error
-          ? err.error
-          : { errors: { network: ['Unable to connect. Please check your internet connection.'] } };
-
-      return throwError(() => ({ ...body, status: err.status }));
+      return throwError(() => ({ ...normalizeErrorBody(err), status: err.status }));
     }),
   );
 };
+
+function normalizeErrorBody(err: HttpErrorResponse): Errors {
+  const body = err.error;
+  if (body && typeof body === 'object') {
+    if ('errors' in body) {
+      return body;
+    }
+    const message = body.message ?? body.detail ?? body.title ?? body.error;
+    if (typeof message === 'string' && message) {
+      return { errors: { '': [message] } };
+    }
+  }
+  return { errors: { network: ['Unable to connect. Please check your internet connection.'] } };
+}

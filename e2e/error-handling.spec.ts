@@ -1,6 +1,6 @@
 import { test, expect, Page, Route } from '@playwright/test';
 
-const API_BASE = 'https://api.realworld.show/api';
+const API_BASE = process.env['API_URL'] ?? 'https://api.realworld.show/api';
 
 /**
  * Helper to mock an API endpoint with a specific error response

@@ -1,6 +1,6 @@
 import 'zone.js';
 import 'zone.js/testing';
-import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import { TestBed, getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -200,7 +200,7 @@ describe('ArticlesService', () => {
         tagList: ['new', 'test'],
       };
       const promise = firstValueFrom(service.create(newArticle));
-      const req = httpMock.expectOne('/articles/');
+      const req = httpMock.expectOne('/articles');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ article: newArticle });
       req.flush({ article: { ...mockArticle, ...newArticle } });
@@ -216,7 +216,7 @@ describe('ArticlesService', () => {
       };
       const errorResponse = { status: 422, statusText: 'Unprocessable Entity' };
       const promise = firstValueFrom(service.create(invalidArticle));
-      const req = httpMock.expectOne('/articles/');
+      const req = httpMock.expectOne('/articles');
       req.flush('Validation failed', errorResponse);
       await expect(promise).rejects.toMatchObject({ status: 422 });
     });

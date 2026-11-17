@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser } from './helpers/auth';
 import { getToken, getCurrentUser } from './helpers/debug';
 
-const API_BASE = 'https://api.realworld.show/api';
+const API_BASE = process.env['API_URL'] ?? 'https://api.realworld.show/api';
 
 /**
  * Tests for the settings/profile update feature.

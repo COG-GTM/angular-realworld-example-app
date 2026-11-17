@@ -14,7 +14,7 @@ export class ArticlesService {
     let params = new HttpParams();
 
     Object.keys(config.filters).forEach(key => {
-      // @ts-ignore
+      // @ts-expect-error index signature is not present on the filter type
       params = params.set(key, config.filters[key]);
     });
 
@@ -33,7 +33,7 @@ export class ArticlesService {
   }
 
   create(article: Partial<Article>): Observable<Article> {
-    return this.http.post<{ article: Article }>('/articles/', { article: article }).pipe(map(data => data.article));
+    return this.http.post<{ article: Article }>('/articles', { article: article }).pipe(map(data => data.article));
   }
 
   update(article: Partial<Article>): Observable<Article> {
